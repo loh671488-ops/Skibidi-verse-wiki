@@ -1,0 +1,155 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #090a0e;
+  color: #f3f3f3;
+  font-family: Arial, sans-serif;
+}
+
+.app {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 50% 0%, #29200e 0%, transparent 45%),
+    #090a0e;
+}
+
+header {
+  padding: 28px 8%;
+  border-bottom: 1px solid #292929;
+}
+
+.logo {
+  font-size: 25px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.logo span,
+.hero h1 span {
+  color: #e5ae39;
+}
+
+.subtitle {
+  color: #777;
+  font-size: 10px;
+  letter-spacing: 3px;
+  margin-top: 5px;
+}
+
+main {
+  max-width: 1100px;
+  margin: auto;
+  padding: 75px 25px;
+}
+
+.hero {
+  text-align: center;
+  padding: 45px 0 75px;
+}
+
+.tag {
+  display: inline-block;
+  color: #e5ae39;
+  border: 1px solid #75551c;
+  padding: 8px 15px;
+  font-size: 11px;
+  letter-spacing: 2px;
+  margin-bottom: 25px;
+}
+
+.hero h1 {
+  font-size: clamp(32px, 7vw, 65px);
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.hero p {
+  color: #888;
+  margin-top: 18px;
+  font-size: 15px;
+}
+
+h2 {
+  font-size: 17px;
+  letter-spacing: 2px;
+  margin-bottom: 25px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.section {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 25px;
+  min-height: 115px;
+  background: #15161b;
+  border: 1px solid #292a30;
+  border-radius: 8px;
+  transition: 0.2s;
+}
+
+.section:hover {
+  border-color: #c18b2c;
+  background: #1c1b17;
+  transform: translateY(-3px);
+}
+
+.section-icon {
+  font-size: 30px;
+}
+
+.section h3 {
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+
+.section p {
+  color: #888;
+  font-size: 12px;
+  margin-top: 7px;
+}
+
+.arrow {
+  margin-left: auto;
+  color: #c18b2c;
+  font-size: 20px;
+}
+
+footer {
+  border-top: 1px solid #292929;
+  padding: 25px;
+  text-align: center;
+  color: #555;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+@media (max-width: 600px) {
+  main {
+    padding: 45px 16px;
+  }
+
+  .hero {
+    padding: 35px 0 55px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .section {
+    min-height: 95px;
+    padding: 18px;
+  }
+}
