@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap');
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -7,7 +9,7 @@
 body {
   background: #090a0e;
   color: #f3f3f3;
-  font-family: Arial, sans-serif;
+  font-family: 'Inter', Arial, sans-serif;
 }
 
 .app {
@@ -19,13 +21,14 @@ body {
 
 header {
   padding: 28px 8%;
-  border-bottom: 1px solid #292929;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
 .logo {
-  font-size: 25px;
-  font-weight: 900;
-  letter-spacing: 2px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 3px;
 }
 
 .logo span,
@@ -34,10 +37,11 @@ header {
 }
 
 .subtitle {
-  color: #777;
+  color: #9295a0;
   font-size: 10px;
   letter-spacing: 3px;
-  margin-top: 5px;
+  margin-top: 3px;
+  font-weight: 600;
 }
 
 main {
@@ -55,26 +59,33 @@ main {
   display: inline-block;
   color: #e5ae39;
   border: 1px solid #75551c;
-  padding: 8px 15px;
-  font-size: 11px;
-  letter-spacing: 2px;
+  background: rgba(20, 17, 12, 0.65);
+  padding: 9px 18px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 3px;
   margin-bottom: 25px;
 }
 
 .hero h1 {
-  font-size: clamp(32px, 7vw, 65px);
-  font-weight: 900;
-  letter-spacing: 2px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: clamp(38px, 7vw, 72px);
+  font-weight: 700;
+  letter-spacing: 3px;
+  line-height: 1.05;
 }
 
 .hero p {
-  color: #888;
-  margin-top: 18px;
+  color: #b0b3bd;
+  margin-top: 20px;
   font-size: 15px;
+  line-height: 1.7;
 }
 
 h2 {
-  font-size: 17px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 23px;
   letter-spacing: 2px;
   margin-bottom: 25px;
 }
@@ -97,15 +108,15 @@ h2 {
   color: #f3f3f3;
   font-family: inherit;
   cursor: pointer;
-  background: #15161b;
-  border: 1px solid #292a30;
-  border-radius: 8px;
-  transition: 0.2s;
+  background: rgba(21, 22, 27, 0.92);
+  border: 1px solid #34343b;
+  border-radius: 10px;
+  transition: 0.25s;
 }
 
 .section:hover {
   border-color: #c18b2c;
-  background: #1c1b17;
+  background: rgba(35, 30, 21, 0.96);
   transform: translateY(-3px);
 }
 
@@ -114,14 +125,15 @@ h2 {
 }
 
 .section h3 {
-  font-size: 16px;
-  letter-spacing: 1px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 21px;
+  letter-spacing: 1.5px;
 }
 
 .section p {
-  color: #888;
+  color: #a0a1aa;
   font-size: 12px;
-  margin-top: 7px;
+  margin-top: 5px;
 }
 
 .arrow {
@@ -131,14 +143,15 @@ h2 {
 }
 
 .back-button {
-  background: #15161b;
+  background: rgba(21, 22, 27, 0.92);
   color: #e5ae39;
   border: 1px solid #75551c;
-  border-radius: 6px;
-  padding: 12px 18px;
-  font-size: 12px;
-  font-weight: bold;
-  letter-spacing: 1px;
+  border-radius: 7px;
+  padding: 14px 20px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
   cursor: pointer;
   transition: 0.2s;
 }
@@ -146,32 +159,37 @@ h2 {
 .back-button:hover {
   background: #29200e;
   border-color: #e5ae39;
+  transform: translateY(-2px);
 }
 
 .values-panel {
-  background: #111216;
-  border: 1px solid #292a30;
-  border-radius: 10px;
-  padding: 22px;
+  background: rgba(17, 18, 22, 0.94);
+  border: 1px solid rgba(255,255,255,0.13);
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 15px 45px rgba(0,0,0,0.25);
 }
 
 .search {
   width: 100%;
   background: #090a0e;
-  border: 1px solid #303139;
-  border-radius: 6px;
-  padding: 15px 17px;
+  border: 1px solid #383940;
+  border-radius: 9px;
+  padding: 17px 19px;
   color: #f3f3f3;
+  font-family: inherit;
   font-size: 14px;
   outline: none;
+  transition: 0.2s;
 }
 
 .search:focus {
   border-color: #c18b2c;
+  box-shadow: 0 0 0 3px rgba(193,139,44,0.1);
 }
 
 .search::placeholder {
-  color: #666;
+  color: #777984;
 }
 
 .values-toolbar {
@@ -179,42 +197,81 @@ h2 {
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  margin: 25px 0 15px;
+  margin: 28px 0 17px;
   color: #e5ae39;
-  font-size: 12px;
-  font-weight: bold;
-  letter-spacing: 1.5px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 2px;
 }
 
 .values-toolbar select {
   background: #1a1b20;
   color: #ddd;
   border: 1px solid #383940;
-  border-radius: 5px;
-  padding: 9px;
+  border-radius: 7px;
+  padding: 11px;
+  font-family: inherit;
   outline: none;
+  cursor: pointer;
 }
 
 .values-table {
-  border: 1px solid #292a30;
-  border-radius: 6px;
+  border: 1px solid #34343b;
+  border-radius: 10px;
   overflow: hidden;
+  background: rgba(9,10,14,0.55);
 }
 
 .values-row {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   gap: 10px;
-  padding: 17px;
+  padding: 19px;
   align-items: center;
 }
 
 .values-heading {
-  background: #1b1b1d;
-  color: #c18b2c;
-  font-size: 11px;
-  font-weight: bold;
-  letter-spacing: 1.5px;
+  background: rgba(255,255,255,0.055);
+  color: #d5a23b;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.values-row:not(.values-heading) {
+  min-height: 76px;
+  font-size: 14px;
+  color: #d9dbe2;
+  transition: background 0.2s;
+}
+
+.values-row:not(.values-heading):hover {
+  background: rgba(193,139,44,0.09);
+}
+
+.values-row:not(.values-heading) span:first-child {
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.values-row:not(.values-heading) span:nth-child(2) {
+  color: #e5ae39;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.values-row:not(.values-heading) span:nth-child(3) {
+  display: inline-flex;
+  width: fit-content;
+  padding: 5px 11px;
+  border-radius: 5px;
+  background: rgba(229,174,57,0.12);
+  color: #e5ae39;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .empty-values {
@@ -224,7 +281,7 @@ h2 {
   justify-content: center;
   align-items: center;
   text-align: center;
-  color: #777;
+  color: #9295a0;
 }
 
 .empty-values span {
@@ -233,28 +290,34 @@ h2 {
 }
 
 .empty-values p {
-  color: #ddd;
-  font-size: 14px;
+  color: #eee;
+  font-size: 15px;
+  font-weight: 600;
   margin-bottom: 7px;
 }
 
 .empty-values small {
-  color: #666;
+  color: #858792;
   font-size: 12px;
 }
 
 footer {
-  border-top: 1px solid #292929;
-  padding: 25px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding: 28px;
   text-align: center;
-  color: #555;
+  color: #777984;
   font-size: 10px;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
+  line-height: 1.8;
 }
 
 @media (max-width: 600px) {
   header {
     padding: 23px 18px;
+  }
+
+  .logo {
+    font-size: 27px;
   }
 
   main {
@@ -263,6 +326,14 @@ footer {
 
   .hero {
     padding: 35px 0 55px;
+  }
+
+  .hero h1 {
+    letter-spacing: 1.5px;
+  }
+
+  .hero p {
+    font-size: 14px;
   }
 
   .grid {
@@ -276,25 +347,42 @@ footer {
   }
 
   .values-panel {
-    padding: 12px;
+    padding: 13px;
   }
 
   .values-row {
-    padding: 14px 10px;
+    padding: 16px 10px;
     font-size: 11px;
   }
 
   .values-heading {
-    font-size: 9px;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+
+  .values-row:not(.values-heading) {
+    min-height: 68px;
+    font-size: 11px;
+  }
+
+  .values-row:not(.values-heading) span:nth-child(3) {
+    padding: 4px 7px;
+    font-size: 10px;
   }
 
   .values-toolbar {
-    font-size: 10px;
+    font-size: 14px;
+    letter-spacing: 1px;
   }
 
   .values-toolbar select {
     max-width: 145px;
     font-size: 11px;
+  }
+
+  footer {
+    padding: 23px 18px;
+    font-size: 9px;
   }
 }
 
@@ -312,4 +400,4 @@ footer {
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
-    }
+}
