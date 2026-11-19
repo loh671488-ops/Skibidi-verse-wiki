@@ -401,3 +401,176 @@ footer {
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
+/* UNIT CARDS */
+
+.unit-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.unit-card {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr) 120px 100px;
+  align-items: center;
+  gap: 18px;
+  padding: 14px;
+  background: rgba(20, 22, 29, 0.94);
+  border: 1px solid #30313a;
+  border-radius: 9px;
+  transition: 0.2s;
+}
+
+.unit-card:hover {
+  border-color: #c18b2c;
+  background: rgba(34, 31, 25, 0.96);
+  transform: translateY(-2px);
+}
+
+.unit-image {
+  width: 76px;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #252832;
+  border: 1px solid #45404a;
+  border-radius: 7px;
+}
+
+.unit-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.unit-image span {
+  font-size: 30px;
+}
+
+.unit-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.unit-info h3 {
+  color: #f3f3f3;
+  font-family: "Trebuchet MS", Arial, sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+}
+
+.unit-rarity {
+  color: #e5ae39;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.unit-info small {
+  color: #85858d;
+  font-size: 11px;
+}
+
+.unit-value,
+.unit-demand {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.unit-value small,
+.unit-demand small {
+  color: #85858d;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 1.3px;
+}
+
+.unit-value strong {
+  color: #e5ae39;
+  font-size: 16px;
+}
+
+.unit-demand span {
+  width: fit-content;
+  padding: 5px 9px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.demand-high {
+  color: #75d69a;
+  background: rgba(65, 180, 105, 0.13);
+}
+
+.demand-medium {
+  color: #e5ae39;
+  background: rgba(229, 174, 57, 0.13);
+}
+
+.demand-low {
+  color: #e47c7c;
+  background: rgba(220, 80, 80, 0.13);
+}
+
+.no-units {
+  padding: 35px 15px;
+  color: #888;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* MOBILE UNIT CARDS */
+
+@media (max-width: 600px) {
+  .unit-card {
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 10px 13px;
+    padding: 12px;
+  }
+
+  .unit-image {
+    width: 64px;
+    height: 64px;
+    grid-column: 1;
+    grid-row: 1 / 4;
+  }
+
+  .unit-info {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .unit-info h3 {
+    font-size: 14px;
+  }
+
+  .unit-value {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .unit-demand {
+    grid-column: 2;
+    grid-row: 3;
+  }
+
+  .unit-value,
+  .unit-demand {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .unit-value strong {
+    font-size: 13px;
+  }
+}
