@@ -92,6 +92,11 @@ h2 {
   gap: 18px;
   padding: 25px;
   min-height: 115px;
+  width: 100%;
+  text-align: left;
+  color: #f3f3f3;
+  font-family: inherit;
+  cursor: pointer;
   background: #15161b;
   border: 1px solid #292a30;
   border-radius: 8px;
