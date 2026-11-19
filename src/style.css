@@ -92,6 +92,11 @@ h2 {
   gap: 18px;
   padding: 25px;
   min-height: 115px;
+  width: 100%;
+  text-align: left;
+  color: #f3f3f3;
+  font-family: inherit;
+  cursor: pointer;
   background: #15161b;
   border: 1px solid #292a30;
   border-radius: 8px;
@@ -125,6 +130,119 @@ h2 {
   font-size: 20px;
 }
 
+.back-button {
+  background: #15161b;
+  color: #e5ae39;
+  border: 1px solid #75551c;
+  border-radius: 6px;
+  padding: 12px 18px;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.back-button:hover {
+  background: #29200e;
+  border-color: #e5ae39;
+}
+
+.values-panel {
+  background: #111216;
+  border: 1px solid #292a30;
+  border-radius: 10px;
+  padding: 22px;
+}
+
+.search {
+  width: 100%;
+  background: #090a0e;
+  border: 1px solid #303139;
+  border-radius: 6px;
+  padding: 15px 17px;
+  color: #f3f3f3;
+  font-size: 14px;
+  outline: none;
+}
+
+.search:focus {
+  border-color: #c18b2c;
+}
+
+.search::placeholder {
+  color: #666;
+}
+
+.values-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 25px 0 15px;
+  color: #e5ae39;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+}
+
+.values-toolbar select {
+  background: #1a1b20;
+  color: #ddd;
+  border: 1px solid #383940;
+  border-radius: 5px;
+  padding: 9px;
+  outline: none;
+}
+
+.values-table {
+  border: 1px solid #292a30;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.values-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 10px;
+  padding: 17px;
+  align-items: center;
+}
+
+.values-heading {
+  background: #1b1b1d;
+  color: #c18b2c;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+}
+
+.empty-values {
+  min-height: 190px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #777;
+}
+
+.empty-values span {
+  font-size: 30px;
+  margin-bottom: 12px;
+}
+
+.empty-values p {
+  color: #ddd;
+  font-size: 14px;
+  margin-bottom: 7px;
+}
+
+.empty-values small {
+  color: #666;
+  font-size: 12px;
+}
+
 footer {
   border-top: 1px solid #292929;
   padding: 25px;
@@ -135,6 +253,10 @@ footer {
 }
 
 @media (max-width: 600px) {
+  header {
+    padding: 23px 18px;
+  }
+
   main {
     padding: 45px 16px;
   }
@@ -152,4 +274,26 @@ footer {
     min-height: 95px;
     padding: 18px;
   }
-    }
+
+  .values-panel {
+    padding: 12px;
+  }
+
+  .values-row {
+    padding: 14px 10px;
+    font-size: 11px;
+  }
+
+  .values-heading {
+    font-size: 9px;
+  }
+
+  .values-toolbar {
+    font-size: 10px;
+  }
+
+  .values-toolbar select {
+    max-width: 145px;
+    font-size: 11px;
+  }
+}
