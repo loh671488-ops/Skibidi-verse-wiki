@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "id": "test-unit",
+    "name": "Test Unit",
+    "rarity": "Mythic",
+    "value": 100000,
+    "demand": "High",
+    "maxLevel": 5,
+    "levels": [
+      {
+        "level": 1,
+        "damage": 100,
+        "cooldown": 2,
+        "range": 20,
+        "upgradeCost": 0
+      },
+      {
+        "level": 2,
+        "damage": 200,
+        "cooldown": 2,
+        "range": 22,
+        "upgradeCost": 500
+      }
+    ]
+  }
+]
