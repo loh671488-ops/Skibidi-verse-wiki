@@ -24,7 +24,8 @@ function App() {
     .sort((a, b) => {
       if (sort === 'value') return b.value - a.value;
       if (sort === 'demand') {
-        return a.demand.localeCompare(b.demand);
+        const order = { High: 3, Medium: 2, Low: 1 };
+        return (order[b.demand] || 0) - (order[a.demand] || 0);
       }
       return a.name.localeCompare(b.name);
     });
@@ -54,38 +55,52 @@ function App() {
               type="text"
               placeholder="Search for a unit..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={e => setSearch(e.target.value)}
             />
 
             <div className="values-toolbar">
               <span>UNIT DATABASE</span>
-              <select value={sort} onChange={(e) => setSort(e.target.value)}>
+              <select value={sort} onChange={e => setSort(e.target.value)}>
                 <option value="name">Sort: Name</option>
                 <option value="value">Sort: Value</option>
                 <option value="demand">Sort: Demand</option>
               </select>
             </div>
 
-            <div className="values-table">
-              <div className="values-row values-heading">
-                <span>UNIT</span>
-                <span>VALUE</span>
-                <span>DEMAND</span>
-              </div>
-
-              {filteredUnits.length > 0 ? (
-                filteredUnits.map(unit => (
-                  <div className="values-row" key={unit.id}>
-                    <span>{unit.name}</span>
-                    <span>{unit.value.toLocaleString()}</span>
-                    <span>{unit.demand}</span>
+            <div className="unit-cards">
+              {filteredUnits.map(unit => (
+                <article className="unit-card" key={unit.id}>
+                  <div className="unit-image">
+                    {unit.image ? (
+                      <img src={unit.image} alt={unit.name} />
+                    ) : (
+                      <span>⚔️</span>
+                    )}
                   </div>
-                ))
-              ) : (
-                <div className="empty-values">
-                  <span>💎</span>
-                  <p>No units found</p>
-                  <small>Try another search.</small>
+
+                  <div className="unit-info">
+                    <h3>{unit.name}</h3>
+                    <span className="unit-rarity">{unit.rarity}</span>
+                    <small>Maximum level: {unit.maxLevel}</small>
+                  </div>
+
+                  <div className="unit-value">
+                    <small>VALUE</small>
+                    <strong>{unit.value.toLocaleString('en-US')}</strong>
+                  </div>
+
+                  <div className="unit-demand">
+                    <small>DEMAND</small>
+                    <span className={`demand-${unit.demand.toLowerCase()}`}>
+                      {unit.demand}
+                    </span>
+                  </div>
+                </article>
+              ))}
+
+              {filteredUnits.length === 0 && (
+                <div className="no-units">
+                  No units found.
                 </div>
               )}
             </div>
