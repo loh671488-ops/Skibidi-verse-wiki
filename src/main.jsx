@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './style.css';
+import units from './data/units.json';
 
 function App() {
   const [page, setPage] = useState('HOME');
@@ -15,6 +16,18 @@ function App() {
     ['🔔', 'UPDATES', 'Latest game updates'],
     ['🛠️', 'TOOLS', 'Useful community tools']
   ];
+
+  const filteredUnits = units
+    .filter(unit =>
+      unit.name.toLowerCase().includes(search.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (sort === 'value') return b.value - a.value;
+      if (sort === 'demand') {
+        return a.demand.localeCompare(b.demand);
+      }
+      return a.name.localeCompare(b.name);
+    });
 
   if (page === 'VALUES') {
     return (
@@ -59,16 +72,29 @@ function App() {
                 <span>VALUE</span>
                 <span>DEMAND</span>
               </div>
-              <div className="empty-values">
-                <span>💎</span>
-                <p>No units added yet</p>
-                <small>Unit values will appear here soon.</small>
-              </div>
+
+              {filteredUnits.length > 0 ? (
+                filteredUnits.map(unit => (
+                  <div className="values-row" key={unit.id}>
+                    <span>{unit.name}</span>
+                    <span>{unit.value.toLocaleString()}</span>
+                    <span>{unit.demand}</span>
+                  </div>
+                ))
+              ) : (
+                <div className="empty-values">
+                  <span>💎</span>
+                  <p>No units found</p>
+                  <small>Try another search.</small>
+                </div>
+              )}
             </div>
           </div>
         </main>
 
-        <footer>UNOFFICIAL COMMUNITY PROJECT · NOT AFFILIATED WITH THE GAME DEVELOPERS</footer>
+        <footer>
+          UNOFFICIAL COMMUNITY PROJECT · NOT AFFILIATED WITH THE GAME DEVELOPERS
+        </footer>
       </div>
     );
   }
@@ -106,7 +132,9 @@ function App() {
         </div>
       </main>
 
-      <footer>UNOFFICIAL COMMUNITY PROJECT · NOT AFFILIATED WITH THE GAME DEVELOPERS</footer>
+      <footer>
+        UNOFFICIAL COMMUNITY PROJECT · NOT AFFILIATED WITH THE GAME DEVELOPERS
+      </footer>
     </div>
   );
 }
