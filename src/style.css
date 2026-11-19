@@ -14,9 +14,17 @@ body {
 
 .app {
   min-height: 100vh;
-  background:
-    radial-gradient(ellipse at 50% 0%, #29200e 0%, transparent 45%),
-    #090a0e;
+  background-color: #090a0e;
+  background-image:
+    linear-gradient(
+      rgba(5, 8, 18, 0.55),
+      rgba(5, 8, 18, 0.85)
+    ),
+    url('/lv_0_20261119190307.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 header {
@@ -216,191 +224,6 @@ h2 {
   cursor: pointer;
 }
 
-.values-table {
-  border: 1px solid #34343b;
-  border-radius: 10px;
-  overflow: hidden;
-  background: rgba(9,10,14,0.55);
-}
-
-.values-row {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  gap: 10px;
-  padding: 19px;
-  align-items: center;
-}
-
-.values-heading {
-  background: rgba(255,255,255,0.055);
-  color: #d5a23b;
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 2px;
-}
-
-.values-row:not(.values-heading) {
-  min-height: 76px;
-  font-size: 14px;
-  color: #d9dbe2;
-  transition: background 0.2s;
-}
-
-.values-row:not(.values-heading):hover {
-  background: rgba(193,139,44,0.09);
-}
-
-.values-row:not(.values-heading) span:first-child {
-  color: #fff;
-  font-weight: 700;
-  letter-spacing: 0.2px;
-}
-
-.values-row:not(.values-heading) span:nth-child(2) {
-  color: #e5ae39;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-
-.values-row:not(.values-heading) span:nth-child(3) {
-  display: inline-flex;
-  width: fit-content;
-  padding: 5px 11px;
-  border-radius: 5px;
-  background: rgba(229,174,57,0.12);
-  color: #e5ae39;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.empty-values {
-  min-height: 190px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  color: #9295a0;
-}
-
-.empty-values span {
-  font-size: 30px;
-  margin-bottom: 12px;
-}
-
-.empty-values p {
-  color: #eee;
-  font-size: 15px;
-  font-weight: 600;
-  margin-bottom: 7px;
-}
-
-.empty-values small {
-  color: #858792;
-  font-size: 12px;
-}
-
-footer {
-  border-top: 1px solid rgba(255,255,255,0.1);
-  padding: 28px;
-  text-align: center;
-  color: #777984;
-  font-size: 10px;
-  letter-spacing: 1.5px;
-  line-height: 1.8;
-}
-
-@media (max-width: 600px) {
-  header {
-    padding: 23px 18px;
-  }
-
-  .logo {
-    font-size: 27px;
-  }
-
-  main {
-    padding: 45px 16px;
-  }
-
-  .hero {
-    padding: 35px 0 55px;
-  }
-
-  .hero h1 {
-    letter-spacing: 1.5px;
-  }
-
-  .hero p {
-    font-size: 14px;
-  }
-
-  .grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .section {
-    min-height: 95px;
-    padding: 18px;
-  }
-
-  .values-panel {
-    padding: 13px;
-  }
-
-  .values-row {
-    padding: 16px 10px;
-    font-size: 11px;
-  }
-
-  .values-heading {
-    font-size: 11px;
-    letter-spacing: 1px;
-  }
-
-  .values-row:not(.values-heading) {
-    min-height: 68px;
-    font-size: 11px;
-  }
-
-  .values-row:not(.values-heading) span:nth-child(3) {
-    padding: 4px 7px;
-    font-size: 10px;
-  }
-
-  .values-toolbar {
-    font-size: 14px;
-    letter-spacing: 1px;
-  }
-
-  .values-toolbar select {
-    max-width: 145px;
-    font-size: 11px;
-  }
-
-  footer {
-    padding: 23px 18px;
-    font-size: 9px;
-  }
-}
-
-/* BACKGROUND IMAGE */
-
-.app {
-  background-image:
-    linear-gradient(
-      rgba(5, 8, 18, 0.55),
-      rgba(5, 8, 18, 0.85)
-    ),
-    url('/lv_0_20261119190307.jpg');
-
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-}
 /* UNIT CARDS */
 
 .unit-cards {
@@ -459,16 +282,17 @@ footer {
 
 .unit-info h3 {
   color: #f3f3f3;
-  font-family: "Trebuchet MS", Arial, sans-serif;
-  font-size: 17px;
-  font-weight: 800;
-  letter-spacing: 0.4px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  overflow-wrap: anywhere;
 }
 
 .unit-rarity {
   color: #e5ae39;
   font-size: 11px;
-  font-weight: bold;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -489,13 +313,14 @@ footer {
 .unit-demand small {
   color: #85858d;
   font-size: 10px;
-  font-weight: bold;
+  font-weight: 700;
   letter-spacing: 1.3px;
 }
 
 .unit-value strong {
   color: #e5ae39;
   font-size: 16px;
+  font-variant-numeric: tabular-nums;
 }
 
 .unit-demand span {
@@ -503,7 +328,7 @@ footer {
   padding: 5px 9px;
   border-radius: 4px;
   font-size: 11px;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .demand-high {
@@ -528,9 +353,67 @@ footer {
   font-size: 14px;
 }
 
-/* MOBILE UNIT CARDS */
+footer {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding: 28px;
+  text-align: center;
+  color: #777984;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  line-height: 1.8;
+}
+
+/* MOBILE */
 
 @media (max-width: 600px) {
+  header {
+    padding: 23px 18px;
+  }
+
+  .logo {
+    font-size: 27px;
+  }
+
+  main {
+    padding: 45px 16px;
+  }
+
+  .hero {
+    padding: 35px 0 55px;
+  }
+
+  .hero h1 {
+    letter-spacing: 1.5px;
+  }
+
+  .hero p {
+    font-size: 14px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .section {
+    min-height: 95px;
+    padding: 18px;
+  }
+
+  .values-panel {
+    padding: 13px;
+  }
+
+  .values-toolbar {
+    font-size: 14px;
+    letter-spacing: 1px;
+  }
+
+  .values-toolbar select {
+    max-width: 145px;
+    font-size: 11px;
+  }
+
   .unit-card {
     grid-template-columns: 64px minmax(0, 1fr);
     gap: 10px 13px;
@@ -550,7 +433,7 @@ footer {
   }
 
   .unit-info h3 {
-    font-size: 14px;
+    font-size: 17px;
   }
 
   .unit-value {
@@ -572,5 +455,10 @@ footer {
 
   .unit-value strong {
     font-size: 13px;
+  }
+
+  footer {
+    padding: 23px 18px;
+    font-size: 9px;
   }
 }
