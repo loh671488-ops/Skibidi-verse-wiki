@@ -5,6 +5,7 @@ import units from './data/units.json';
 
 function App() {
   const [page, setPage] = useState('HOME');
+  const [previousPage, setPreviousPage] = useState('UNITS');
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('name');
   const [rarity, setRarity] = useState('all');
@@ -27,6 +28,16 @@ function App() {
       </div>
     </header>
   );
+
+  const formatNumber = (value) => {
+    const number = Number(value);
+
+    if (!Number.isFinite(number)) return '—';
+
+    return number.toLocaleString('en-US', {
+      maximumFractionDigits: 2
+    });
+  };
 
   const filteredUnits = units
     .filter(unit =>
@@ -53,6 +64,7 @@ function App() {
   )];
 
   const openUnit = (unit) => {
+    setPreviousPage(page);
     setSelectedUnit(unit);
     setPage('UNIT');
   };
@@ -84,7 +96,7 @@ function App() {
         <>
           <div className="unit-value">
             <small>VALUE</small>
-            <strong>{(unit.value || 0).toLocaleString('en-US')}</strong>
+            <strong>{formatNumber(unit.value || 0)}</strong>
           </div>
 
           <div className="unit-demand">
@@ -107,6 +119,12 @@ function App() {
   if (page === 'UNIT' && selectedUnit) {
     const levels = selectedUnit.levels || [];
 
+    const maxLevel = Number(selectedUnit.maxLevel);
+
+    const hasMaxLevel = levels.some((level, index) =>
+      Number(level.level ?? index + 1) === maxLevel
+    );
+
     return (
       <div className="app">
         <SiteHeader />
@@ -114,118 +132,146 @@ function App() {
         <main>
           <button
             className="back-button"
-            onClick={() => setPage('UNITS')}
+            onClick={() => setPage(previousPage)}
           >
-            ← BACK TO UNITS
+            ← BACK
           </button>
 
           <div className="hero">
             <div className="tag">UNIT PROFILE</div>
             <h1>{selectedUnit.name}</h1>
-            <p>{selectedUnit.rarity || 'Unknown rarity'}</p>
+            <p>Complete unit statistics and information.</p>
           </div>
 
-          <div className="values-panel">
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '24px',
-              flexWrap: 'wrap',
-              marginBottom: '30px'
-            }}>
-              <div className="unit-image" style={{
-                width: '130px',
-                height: '130px',
-                flexShrink: 0
-              }}>
+          <div className="unit-profile">
+
+            <div className="unit-profile-top">
+              <div className="unit-profile-image">
                 {selectedUnit.image ? (
                   <img src={selectedUnit.image} alt={selectedUnit.name} />
                 ) : (
-                  <span style={{ fontSize: '48px' }}>⚔️</span>
+                  <span>⚔️</span>
                 )}
               </div>
 
-              <div>
+              <div className="unit-profile-info">
                 <h2>{selectedUnit.name}</h2>
-                <p style={{ marginTop: '8px' }}>
-                  Rarity: {selectedUnit.rarity || 'Unknown'}
+
+                <span className="unit-profile-rarity">
+                  {selectedUnit.rarity || 'Unknown rarity'}
+                </span>
+
+                <p>
+                  Information about this unit in Skibidi Verse TD.
                 </p>
-                <p style={{ marginTop: '5px' }}>
-                  Maximum level: {selectedUnit.maxLevel ?? 'Unknown'}
-                </p>
-                {selectedUnit.value !== undefined && (
-                  <p style={{ marginTop: '5px' }}>
-                    Value: {selectedUnit.value.toLocaleString('en-US')}
-                  </p>
-                )}
               </div>
             </div>
 
-            <div className="values-toolbar">
-              <span>UNIT STATISTICS</span>
+            <div className="unit-profile-stats">
+
+              <div className="profile-stat">
+                <small>MAX LEVEL</small>
+                <strong>{selectedUnit.maxLevel ?? 'Unknown'}</strong>
+              </div>
+
+              <div className="profile-stat">
+                <small>VALUE</small>
+                <strong>
+                  {selectedUnit.value !== undefined
+                    ? formatNumber(selectedUnit.value)
+                    : 'Unknown'}
+                </strong>
+              </div>
+
+              <div className="profile-stat">
+                <small>DEMAND</small>
+                <strong>{selectedUnit.demand || 'Unknown'}</strong>
+              </div>
+
             </div>
 
-            {levels.length > 0 ? (
-              <div style={{ overflowX: 'auto', marginTop: '15px' }}>
-                <table style={{
-                  width: '100%',
-                  borderCollapse: 'collapse',
-                  minWidth: '520px',
-                  textAlign: 'center'
-                }}>
-                  <thead>
-                    <tr>
-                      {['LEVEL', 'DAMAGE', 'COOLDOWN', 'RANGE', 'UPGRADE COST'].map(label => (
-                        <th key={label} style={{
-                          padding: '14px 10px',
-                          borderBottom: '1px solid #444',
-                          color: '#d6ad55',
-                          fontSize: '12px'
-                        }}>
-                          {label}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
+            <div className="unit-profile-section">
+              <h3>UNIT STATISTICS</h3>
 
-                  <tbody>
-                    {levels.map((level, index) => (
-                      <tr key={level.level ?? index}>
-                        <td style={{ padding: '14px 10px', borderBottom: '1px solid #292929' }}>
-                          {level.level ?? index + 1}
-                        </td>
-                        <td style={{ padding: '14px 10px', borderBottom: '1px solid #292929' }}>
-                          {level.damage ?? '—'}
-                        </td>
-                        <td style={{ padding: '14px 10px', borderBottom: '1px solid #292929' }}>
-                          {level.cooldown ?? '—'}
-                        </td>
-                        <td style={{ padding: '14px 10px', borderBottom: '1px solid #292929' }}>
-                          {level.range ?? '—'}
-                        </td>
-                        <td style={{ padding: '14px 10px', borderBottom: '1px solid #292929' }}>
-                          {level.upgradeCost !== undefined
-                            ? level.upgradeCost.toLocaleString('en-US')
-                            : '—'}
-                        </td>
+              {levels.length > 0 ? (
+                <div className="unit-levels-wrap">
+                  <table className="unit-levels-table">
+                    <thead>
+                      <tr>
+                        <th>LEVEL</th>
+                        <th>DAMAGE</th>
+                        <th>COOLDOWN</th>
+                        <th>DPS</th>
+                        <th>RANGE</th>
+                        <th>UPGRADE COST</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <p style={{ padding: '25px 0', color: '#aaa' }}>
-                Statistics for this unit have not been added yet.
-              </p>
-            )}
+                    </thead>
 
-            <p style={{
-              marginTop: '25px',
-              color: '#888',
-              fontSize: '12px'
-            }}>
-              Information may be updated as new game data becomes available.
-            </p>
+                    <tbody>
+                      {levels.map((level, index) => {
+                        const currentLevel = Number(
+                          level.level ?? index + 1
+                        );
+
+                        const damage = Number(level.damage);
+                        const cooldown = Number(level.cooldown);
+
+                        const dps =
+                          Number.isFinite(damage) &&
+                          Number.isFinite(cooldown) &&
+                          cooldown > 0
+                            ? damage / cooldown
+                            : null;
+
+                        const isMaxLevel = hasMaxLevel
+                          ? currentLevel === maxLevel
+                          : index === levels.length - 1;
+
+                        return (
+                          <tr
+                            key={level.level ?? index}
+                            className={isMaxLevel ? 'max-level-row' : ''}
+                          >
+                            <td>
+                              {currentLevel}
+                              {isMaxLevel ? ' ★' : ''}
+                            </td>
+
+                            <td>{formatNumber(level.damage)}</td>
+
+                            <td>{formatNumber(level.cooldown)}</td>
+
+                            <td>
+                              {dps !== null
+                                ? formatNumber(dps)
+                                : '—'}
+                            </td>
+
+                            <td>{formatNumber(level.range)}</td>
+
+                            <td>
+                              {level.upgradeCost !== undefined
+                                ? formatNumber(level.upgradeCost)
+                                : '—'}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="profile-empty">
+                  Statistics for this unit have not been added yet.
+                </div>
+              )}
+
+              <p className="profile-note">
+                DPS is calculated as damage divided by cooldown.
+                Information may be updated as new game data becomes available.
+              </p>
+            </div>
+
           </div>
         </main>
 
