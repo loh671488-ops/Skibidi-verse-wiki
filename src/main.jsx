@@ -32,13 +32,19 @@ function App() {
       return a.name.localeCompare(b.name);
     });
 
+  const SiteHeader = () => (
+    <header className="site-header">
+      <div className="site-brand">
+        <img src="/logo.png" alt="Skibidi Verse TD" />
+        <span>WIKI</span>
+      </div>
+    </header>
+  );
+
   if (page === 'VALUES') {
     return (
       <div className="app">
-        <header>
-          <div className="logo">SKIBIDI <span>VERSE</span></div>
-          <div className="subtitle">TOWER DEFENSE DATABASE</div>
-        </header>
+        <SiteHeader />
 
         <main>
           <button className="back-button" onClick={() => setPage('HOME')}>
@@ -118,20 +124,12 @@ function App() {
 
   return (
     <div className="app">
-      <header>
-        <div className="logo">SKIBIDI <span>VERSE</span></div>
-        <div className="subtitle">TOWER DEFENSE DATABASE</div>
-      </header>
+      <SiteHeader />
 
       <main>
         <div className="hero">
           <div className="tag">COMMUNITY DATABASE</div>
-
-          <div className="game-brand">
-            <img src="/logo.jpg" alt="Skibidi Verse TD" />
-            <span>WIKI</span>
-          </div>
-
+          <h1>SKIBIDI VERSE <span>TD</span></h1>
           <p>Your ultimate guide to units, values, updates and more.</p>
         </div>
 
