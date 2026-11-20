@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import './style.css';
 import units from './data/units.json';
 import updates from './data/updates.js';
+import SiteHeader from './components/SiteHeader.jsx';
 
 function App() {
   const [page, setPage] = useState('HOME');
@@ -21,15 +22,6 @@ function App() {
     ['🔔', 'UPDATES', 'Latest game updates'],
     ['🛠️', 'TOOLS', 'Useful community tools']
   ];
-
-  const SiteHeader = () => (
-    <header className="site-header">
-      <div className="site-brand">
-        <img src="/logo.png" alt="Skibidi Verse TD" />
-        <span>WIKI</span>
-      </div>
-    </header>
-  );
 
   const Footer = () => (
     <footer>
