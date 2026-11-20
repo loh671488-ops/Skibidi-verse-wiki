@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import './style.css';
 
-import units from './data/units.json';
+import { supabase } from './lib/supabase.js';
 import updates from './data/updates.js';
 
 import UnitProfile from './pages/UnitProfile.jsx';
@@ -20,6 +20,41 @@ function App() {
   const [rarity, setRarity] = useState('all');
   const [selectedUnit, setSelectedUnit] = useState(null);
   const [selectedUpdate, setSelectedUpdate] = useState(null);
+
+  const [units, setUnits] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [reloadKey, setReloadKey] = useState(0);
+
+  useEffect(() => {
+    async function loadUnits() {
+      setLoading(true);
+      setError('');
+
+      const { data, error } = await supabase
+        .from('units')
+        .select('*')
+        .order('id', { ascending: true });
+
+      if (error) {
+        setError(error.message);
+        setLoading(false);
+        return;
+      }
+
+      const formattedUnits = data.map(unit => ({
+        ...unit,
+        maxLevel: unit.max_level,
+        attackType: unit.attack_type,
+        damageType: unit.damage_type
+      }));
+
+      setUnits(formattedUnits);
+      setLoading(false);
+    }
+
+    loadUnits();
+  }, [reloadKey]);
 
   const sections = [
     ['💎', 'VALUES', 'Unit prices and trading values'],
@@ -86,7 +121,45 @@ function App() {
     }
   };
 
-  // UNIT PROFILE
+  if (loading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        color: 'white',
+        background: '#101116',
+        fontSize: '18px'
+      }}>
+        Loading units...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: '16px',
+        color: 'white',
+        background: '#101116',
+        padding: '20px',
+        textAlign: 'center'
+      }}>
+        <h2>Failed to load units</h2>
+        <p>{error}</p>
+        <button onClick={() => setReloadKey(key => key + 1)}>
+          Try again
+        </button>
+      </div>
+    );
+  }
+
   if (page === 'UNIT' && selectedUnit) {
     return (
       <UnitProfile
@@ -97,7 +170,6 @@ function App() {
     );
   }
 
-  // UPDATE DETAILS
   if (page === 'UPDATE_DETAIL' && selectedUpdate) {
     return (
       <UpdateDetail
@@ -107,7 +179,6 @@ function App() {
     );
   }
 
-  // UPDATES
   if (page === 'UPDATES') {
     return (
       <UpdatesPage
@@ -118,7 +189,6 @@ function App() {
     );
   }
 
-  // VALUES
   if (page === 'VALUES') {
     return (
       <ValuesPage
@@ -135,7 +205,6 @@ function App() {
     );
   }
 
-  // UNITS
   if (page === 'UNITS') {
     return (
       <UnitsPage
@@ -154,7 +223,6 @@ function App() {
     );
   }
 
-  // HOME
   return (
     <HomePage
       sections={sections}
