@@ -1,4 +1,3 @@
-
 import SiteHeader from '../components/SiteHeader.jsx';
 import Footer from '../components/Footer.jsx';
 
