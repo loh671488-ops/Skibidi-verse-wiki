@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './style.css';
+
 import units from './data/units.json';
 import updates from './data/updates.js';
+
 import SiteHeader from './components/SiteHeader.jsx';
+import Footer from './components/Footer.jsx';
+import UnitCard from './components/UnitCard.jsx';
 
 function App() {
   const [page, setPage] = useState('HOME');
@@ -22,12 +26,6 @@ function App() {
     ['🔔', 'UPDATES', 'Latest game updates'],
     ['🛠️', 'TOOLS', 'Useful community tools']
   ];
-
-  const Footer = () => (
-    <footer>
-      UNOFFICIAL COMMUNITY PROJECT · NOT AFFILIATED WITH THE GAME DEVELOPERS
-    </footer>
-  );
 
   const formatNumber = (value) => {
     const number = Number(value);
@@ -73,52 +71,6 @@ function App() {
     setSelectedUpdate(update);
     setPage('UPDATE_DETAIL');
   };
-
-  const UnitCard = ({ unit, showValue = false }) => (
-    <article
-      className="unit-card"
-      key={unit.id}
-      onClick={() => openUnit(unit)}
-      style={{ cursor: 'pointer' }}
-    >
-      <div className="unit-image">
-        {unit.image ? (
-          <img src={unit.image} alt={unit.name} />
-        ) : (
-          <span>⚔️</span>
-        )}
-      </div>
-
-      <div className="unit-info">
-        <h3>{unit.name}</h3>
-        <span className="unit-rarity">
-          {unit.rarity || 'Unknown rarity'}
-        </span>
-        <small>Maximum level: {unit.maxLevel ?? 'Unknown'}</small>
-      </div>
-
-      {showValue ? (
-        <>
-          <div className="unit-value">
-            <small>VALUE</small>
-            <strong>{formatNumber(unit.value || 0)}</strong>
-          </div>
-
-          <div className="unit-demand">
-            <small>DEMAND</small>
-            <span className={`demand-${(unit.demand || 'low').toLowerCase()}`}>
-              {unit.demand || 'Unknown'}
-            </span>
-          </div>
-        </>
-      ) : (
-        <div className="unit-value">
-          <small>UNIT TYPE</small>
-          <strong>{unit.rarity || 'Unknown'}</strong>
-        </div>
-      )}
-    </article>
-  );
 
   // UNIT PROFILE
   if (page === 'UNIT' && selectedUnit) {
@@ -474,7 +426,13 @@ function App() {
 
             <div className="unit-cards">
               {filteredUnits.map(unit => (
-                <UnitCard key={unit.id} unit={unit} showValue />
+                <UnitCard
+                  key={unit.id}
+                  unit={unit}
+                  showValue
+                  onOpen={openUnit}
+                  formatNumber={formatNumber}
+                />
               ))}
 
               {filteredUnits.length === 0 && (
@@ -533,7 +491,12 @@ function App() {
 
             <div className="unit-cards">
               {filteredUnits.map(unit => (
-                <UnitCard key={unit.id} unit={unit} />
+                <UnitCard
+                  key={unit.id}
+                  unit={unit}
+                  onOpen={openUnit}
+                  formatNumber={formatNumber}
+                />
               ))}
 
               {filteredUnits.length === 0 && (
