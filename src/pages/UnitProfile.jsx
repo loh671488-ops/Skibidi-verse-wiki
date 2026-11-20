@@ -1,3 +1,5 @@
+import SiteHeader from '../components/SiteHeader.jsx';
+import Footer from '../components/Footer.jsx';
 
 function UnitProfile({ unit, onBack, formatNumber }) {
   const levels = unit.levels || [];
@@ -10,12 +12,7 @@ function UnitProfile({ unit, onBack, formatNumber }) {
 
   return (
     <div className="app">
-      <header className="site-header">
-        <div className="site-brand">
-          <img src="/logo.png" alt="Skibidi Verse TD" />
-          <span>WIKI</span>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main>
         <button className="back-button" onClick={onBack}>
@@ -193,9 +190,7 @@ function UnitProfile({ unit, onBack, formatNumber }) {
         </div>
       </main>
 
-      <footer>
-        UNOFFICIAL COMMUNITY PROJECT · NOT AFFILIATED WITH THE GAME DEVELOPERS
-      </footer>
+      <Footer />
     </div>
   );
 }
