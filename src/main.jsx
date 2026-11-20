@@ -118,7 +118,7 @@ function App() {
   // UNIT PROFILE
   if (page === 'UNIT' && selectedUnit) {
     const levels = selectedUnit.levels || [];
-
+    const abilities = selectedUnit.abilities || [];
     const maxLevel = Number(selectedUnit.maxLevel);
 
     const hasMaxLevel = levels.some((level, index) =>
@@ -145,6 +145,7 @@ function App() {
 
           <div className="unit-profile">
 
+            {/* OVERVIEW */}
             <div className="unit-profile-top">
               <div className="unit-profile-image">
                 {selectedUnit.image ? (
@@ -162,13 +163,13 @@ function App() {
                 </span>
 
                 <p>
-                  Information about this unit in Skibidi Verse TD.
+                  {selectedUnit.description || 'No description available yet.'}
                 </p>
               </div>
             </div>
 
+            {/* BASIC INFORMATION */}
             <div className="unit-profile-stats">
-
               <div className="profile-stat">
                 <small>MAX LEVEL</small>
                 <strong>{selectedUnit.maxLevel ?? 'Unknown'}</strong>
@@ -187,11 +188,57 @@ function App() {
                 <small>DEMAND</small>
                 <strong>{selectedUnit.demand || 'Unknown'}</strong>
               </div>
-
             </div>
 
+            {/* ATTACK INFORMATION */}
             <div className="unit-profile-section">
-              <h3>UNIT STATISTICS</h3>
+              <h3>ATTACK INFORMATION</h3>
+
+              <div className="unit-profile-stats">
+                <div className="profile-stat">
+                  <small>ATTACK TYPE</small>
+                  <strong>{selectedUnit.attackType || 'Unknown'}</strong>
+                </div>
+
+                <div className="profile-stat">
+                  <small>DAMAGE TYPE</small>
+                  <strong>{selectedUnit.damageType || 'Unknown'}</strong>
+                </div>
+              </div>
+            </div>
+
+            {/* ABILITIES */}
+            <div className="unit-profile-section">
+              <h3>ABILITIES</h3>
+
+              {abilities.length > 0 ? (
+                <div className="ability-list">
+                  {abilities.map((ability, index) => (
+                    <div className="ability-card" key={index}>
+                      <div className="ability-card-top">
+                        <h4>{ability.name || 'Unnamed ability'}</h4>
+
+                        <span className="ability-type">
+                          {ability.type || 'Unknown'}
+                        </span>
+                      </div>
+
+                      <p>
+                        {ability.description || 'No description available.'}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="profile-empty">
+                  No abilities added yet.
+                </div>
+              )}
+            </div>
+
+            {/* LEVEL STATISTICS */}
+            <div className="unit-profile-section">
+              <h3>LEVEL STATISTICS</h3>
 
               {levels.length > 0 ? (
                 <div className="unit-levels-wrap">
@@ -238,7 +285,6 @@ function App() {
                             </td>
 
                             <td>{formatNumber(level.damage)}</td>
-
                             <td>{formatNumber(level.cooldown)}</td>
 
                             <td>
@@ -268,7 +314,6 @@ function App() {
 
               <p className="profile-note">
                 DPS is calculated as damage divided by cooldown.
-                Information may be updated as new game data becomes available.
               </p>
             </div>
 
