@@ -9,6 +9,7 @@ import SiteHeader from './components/SiteHeader.jsx';
 import Footer from './components/Footer.jsx';
 import UnitCard from './components/UnitCard.jsx';
 import UnitProfile from './pages/UnitProfile.jsx';
+import UpdatesPage from './pages/UpdatesPage.jsx';
 
 function App() {
   const [page, setPage] = useState('HOME');
@@ -89,7 +90,6 @@ function App() {
     return (
       <div className="app">
         <SiteHeader />
-
         <main>
           <button
             className="back-button"
@@ -127,7 +127,6 @@ function App() {
             </ul>
           </div>
         </main>
-
         <Footer />
       </div>
     );
@@ -136,67 +135,11 @@ function App() {
   // UPDATES PAGE
   if (page === 'UPDATES') {
     return (
-      <div className="app">
-        <SiteHeader />
-
-        <main>
-          <button
-            className="back-button"
-            onClick={() => setPage('HOME')}
-          >
-            ← BACK TO HOME
-          </button>
-
-          <div className="hero">
-            <div className="tag">GAME CHANGELOG</div>
-            <h1>GAME <span>UPDATES</span></h1>
-            <p>Follow the latest changes and additions to the game.</p>
-          </div>
-
-          <div className="updates-container">
-            <div className="updates-heading">
-              <h2>UPDATE HISTORY</h2>
-              <span>{updates.length} ENTRIES</span>
-            </div>
-
-            {updates.length > 0 ? (
-              <div className="updates-list">
-                {updates.map(update => (
-                  <article
-                    className="update-card"
-                    key={update.id}
-                    onClick={() => openUpdate(update)}
-                  >
-                    <div className="update-card-top">
-                      <span className="update-category">
-                        {update.category}
-                      </span>
-                      <span className="update-date">
-                        {update.date}
-                      </span>
-                    </div>
-
-                    <h3>{update.title}</h3>
-
-                    <p>{update.description}</p>
-
-                    <div className="update-card-bottom">
-                      <span>{update.version}</span>
-                      <strong>READ MORE ↗</strong>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            ) : (
-              <div className="profile-empty">
-                No updates have been added yet.
-              </div>
-            )}
-          </div>
-        </main>
-
-        <Footer />
-      </div>
+      <UpdatesPage
+        updates={updates}
+        onBack={() => setPage('HOME')}
+        onOpenUpdate={openUpdate}
+      />
     );
   }
 
@@ -205,9 +148,11 @@ function App() {
     return (
       <div className="app">
         <SiteHeader />
-
         <main>
-          <button className="back-button" onClick={() => setPage('HOME')}>
+          <button
+            className="back-button"
+            onClick={() => setPage('HOME')}
+          >
             ← BACK TO HOME
           </button>
 
@@ -228,8 +173,10 @@ function App() {
 
             <div className="values-toolbar">
               <span>UNIT DATABASE</span>
-
-              <select value={sort} onChange={e => setSort(e.target.value)}>
+              <select
+                value={sort}
+                onChange={e => setSort(e.target.value)}
+              >
                 <option value="name">Sort: Name</option>
                 <option value="value">Sort: Value</option>
                 <option value="demand">Sort: Demand</option>
@@ -253,7 +200,6 @@ function App() {
             </div>
           </div>
         </main>
-
         <Footer />
       </div>
     );
@@ -264,9 +210,11 @@ function App() {
     return (
       <div className="app">
         <SiteHeader />
-
         <main>
-          <button className="back-button" onClick={() => setPage('HOME')}>
+          <button
+            className="back-button"
+            onClick={() => setPage('HOME')}
+          >
             ← BACK TO HOME
           </button>
 
@@ -288,14 +236,22 @@ function App() {
             <div className="values-toolbar">
               <span>ALL UNITS · {filteredUnits.length}</span>
 
-              <select value={rarity} onChange={e => setRarity(e.target.value)}>
+              <select
+                value={rarity}
+                onChange={e => setRarity(e.target.value)}
+              >
                 <option value="all">All rarities</option>
                 {rarities.map(item => (
-                  <option value={item} key={item}>{item}</option>
+                  <option value={item} key={item}>
+                    {item}
+                  </option>
                 ))}
               </select>
 
-              <select value={sort} onChange={e => setSort(e.target.value)}>
+              <select
+                value={sort}
+                onChange={e => setSort(e.target.value)}
+              >
                 <option value="name">Sort: Name</option>
                 <option value="value">Sort: Value</option>
               </select>
@@ -317,7 +273,6 @@ function App() {
             </div>
           </div>
         </main>
-
         <Footer />
       </div>
     );
