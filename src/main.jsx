@@ -2,22 +2,7 @@ import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './style.css';
 import units from './data/units.json';
-
-const updates = [
-  {
-    id: 1,
-    version: 'VERSION 1',
-    date: 'Date not added',
-    title: 'First update entry',
-    category: 'GENERAL',
-    description: 'This is a demonstration update. Replace this text with information about a real game update.',
-    changes: [
-      'Add new units here.',
-      'Add balance changes here.',
-      'Add bug fixes and other changes here.'
-    ]
-  }
-];
+import updates from './data/updates.js';
 
 function App() {
   const [page, setPage] = useState('HOME');
