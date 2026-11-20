@@ -11,6 +11,7 @@ import UnitCard from './components/UnitCard.jsx';
 import UnitProfile from './pages/UnitProfile.jsx';
 import UpdatesPage from './pages/UpdatesPage.jsx';
 import UpdateDetail from './pages/UpdateDetail.jsx';
+import ValuesPage from './pages/ValuesPage.jsx';
 
 function App() {
   const [page, setPage] = useState('HOME');
@@ -110,62 +111,17 @@ function App() {
   // VALUES PAGE
   if (page === 'VALUES') {
     return (
-      <div className="app">
-        <SiteHeader />
-        <main>
-          <button
-            className="back-button"
-            onClick={() => setPage('HOME')}
-          >
-            ← BACK TO HOME
-          </button>
-
-          <div className="hero">
-            <div className="tag">TRADING DATABASE</div>
-            <h1>UNIT <span>VALUES</span></h1>
-            <p>Find unit prices and check their demand.</p>
-          </div>
-
-          <div className="values-panel">
-            <input
-              className="search"
-              type="text"
-              placeholder="Search for a unit..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
-
-            <div className="values-toolbar">
-              <span>UNIT DATABASE</span>
-              <select
-                value={sort}
-                onChange={e => setSort(e.target.value)}
-              >
-                <option value="name">Sort: Name</option>
-                <option value="value">Sort: Value</option>
-                <option value="demand">Sort: Demand</option>
-              </select>
-            </div>
-
-            <div className="unit-cards">
-              {filteredUnits.map(unit => (
-                <UnitCard
-                  key={unit.id}
-                  unit={unit}
-                  showValue
-                  onOpen={openUnit}
-                  formatNumber={formatNumber}
-                />
-              ))}
-
-              {filteredUnits.length === 0 && (
-                <div className="no-units">No units found.</div>
-              )}
-            </div>
-          </div>
-        </main>
-        <Footer />
-      </div>
+      <ValuesPage
+        units={units}
+        search={search}
+        setSearch={setSearch}
+        sort={sort}
+        setSort={setSort}
+        filteredUnits={filteredUnits}
+        onOpenUnit={openUnit}
+        formatNumber={formatNumber}
+        onBack={() => setPage('HOME')}
+      />
     );
   }
 
