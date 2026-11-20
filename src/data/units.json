@@ -6,6 +6,20 @@
     "value": 100000,
     "demand": "High",
     "maxLevel": 5,
+
+    "image": "",
+    "description": "A powerful Mythic unit.",
+    "attackType": "Single Target",
+    "damageType": "Physical",
+
+    "abilities": [
+      {
+        "name": "Test Ability",
+        "description": "Deals additional damage to enemies.",
+        "type": "Passive"
+      }
+    ],
+
     "levels": [
       {
         "level": 1,
