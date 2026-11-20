@@ -11,6 +11,7 @@ import UpdateDetail from './pages/UpdateDetail.jsx';
 import ValuesPage from './pages/ValuesPage.jsx';
 import UnitsPage from './pages/UnitsPage.jsx';
 import HomePage from './pages/HomePage.jsx';
+import AdminPage from './pages/AdminPage.jsx';
 
 function App() {
   const [page, setPage] = useState('HOME');
@@ -56,13 +57,35 @@ function App() {
     loadUnits();
   }, [reloadKey]);
 
+  const refreshUnits = async () => {
+    const { data, error } = await supabase
+      .from('units')
+      .select('*')
+      .order('id', { ascending: true });
+
+    if (error) {
+      window.alert('Could not refresh units: ' + error.message);
+      return;
+    }
+
+    const formattedUnits = data.map(unit => ({
+      ...unit,
+      maxLevel: unit.max_level,
+      attackType: unit.attack_type,
+      damageType: unit.damage_type
+    }));
+
+    setUnits(formattedUnits);
+  };
+
   const sections = [
     ['💎', 'VALUES', 'Unit prices and trading values'],
     ['⚔️', 'UNITS', 'Explore all available units'],
     ['📖', 'WIKI', 'Game information and guides'],
     ['👹', 'BOSSES', 'Bosses and their statistics'],
     ['🔔', 'UPDATES', 'Latest game updates'],
-    ['🛠️', 'TOOLS', 'Useful community tools']
+    ['🛠️', 'TOOLS', 'Useful community tools'],
+    ['🔐', 'ADMIN', 'Manage the unit database']
   ];
 
   const formatNumber = (value) => {
@@ -118,6 +141,8 @@ function App() {
       setPage(title);
     } else if (title === 'UPDATES') {
       setPage('UPDATES');
+    } else if (title === 'ADMIN') {
+      setPage('ADMIN');
     }
   };
 
@@ -157,6 +182,16 @@ function App() {
           Try again
         </button>
       </div>
+    );
+  }
+
+  if (page === 'ADMIN') {
+    return (
+      <AdminPage
+        units={units}
+        onBack={() => setPage('HOME')}
+        onReload={refreshUnits}
+      />
     );
   }
 
