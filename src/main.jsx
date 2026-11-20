@@ -3,6 +3,22 @@ import { createRoot } from 'react-dom/client';
 import './style.css';
 import units from './data/units.json';
 
+const updates = [
+  {
+    id: 1,
+    version: 'VERSION 1',
+    date: 'Date not added',
+    title: 'First update entry',
+    category: 'GENERAL',
+    description: 'This is a demonstration update. Replace this text with information about a real game update.',
+    changes: [
+      'Add new units here.',
+      'Add balance changes here.',
+      'Add bug fixes and other changes here.'
+    ]
+  }
+];
+
 function App() {
   const [page, setPage] = useState('HOME');
   const [previousPage, setPreviousPage] = useState('UNITS');
@@ -10,6 +26,7 @@ function App() {
   const [sort, setSort] = useState('name');
   const [rarity, setRarity] = useState('all');
   const [selectedUnit, setSelectedUnit] = useState(null);
+  const [selectedUpdate, setSelectedUpdate] = useState(null);
 
   const sections = [
     ['💎', 'VALUES', 'Unit prices and trading values'],
@@ -27,6 +44,12 @@ function App() {
         <span>WIKI</span>
       </div>
     </header>
+  );
+
+  const Footer = () => (
+    <footer>
+      UNOFFICIAL COMMUNITY PROJECT · NOT AFFILIATED WITH THE GAME DEVELOPERS
+    </footer>
   );
 
   const formatNumber = (value) => {
@@ -67,6 +90,11 @@ function App() {
     setPreviousPage(page);
     setSelectedUnit(unit);
     setPage('UNIT');
+  };
+
+  const openUpdate = (update) => {
+    setSelectedUpdate(update);
+    setPage('UPDATE_DETAIL');
   };
 
   const UnitCard = ({ unit, showValue = false }) => (
@@ -145,7 +173,6 @@ function App() {
 
           <div className="unit-profile">
 
-            {/* OVERVIEW */}
             <div className="unit-profile-top">
               <div className="unit-profile-image">
                 {selectedUnit.image ? (
@@ -168,7 +195,6 @@ function App() {
               </div>
             </div>
 
-            {/* BASIC INFORMATION */}
             <div className="unit-profile-stats">
               <div className="profile-stat">
                 <small>MAX LEVEL</small>
@@ -190,7 +216,6 @@ function App() {
               </div>
             </div>
 
-            {/* ATTACK INFORMATION */}
             <div className="unit-profile-section">
               <h3>ATTACK INFORMATION</h3>
 
@@ -199,15 +224,9 @@ function App() {
                   <small>ATTACK TYPE</small>
                   <strong>{selectedUnit.attackType || 'Unknown'}</strong>
                 </div>
-
-                <div className="profile-stat">
-                  <small>DAMAGE TYPE</small>
-                  <strong>{selectedUnit.damageType || 'Unknown'}</strong>
-                </div>
               </div>
             </div>
 
-            {/* ABILITIES */}
             <div className="unit-profile-section">
               <h3>ABILITIES</h3>
 
@@ -236,7 +255,6 @@ function App() {
               )}
             </div>
 
-            {/* LEVEL STATISTICS */}
             <div className="unit-profile-section">
               <h3>LEVEL STATISTICS</h3>
 
@@ -320,9 +338,123 @@ function App() {
           </div>
         </main>
 
-        <footer>
-          UNOFFICIAL COMMUNITY PROJECT · NOT AFFILIATED WITH THE GAME DEVELOPERS
-        </footer>
+        <Footer />
+      </div>
+    );
+  }
+
+  // UPDATE DETAILS PAGE
+  if (page === 'UPDATE_DETAIL' && selectedUpdate) {
+    return (
+      <div className="app">
+        <SiteHeader />
+
+        <main>
+          <button
+            className="back-button"
+            onClick={() => setPage('UPDATES')}
+          >
+            ← BACK TO UPDATES
+          </button>
+
+          <div className="hero">
+            <div className="tag">{selectedUpdate.version}</div>
+            <h1>{selectedUpdate.title}</h1>
+            <p>{selectedUpdate.date}</p>
+          </div>
+
+          <div className="update-detail">
+            <div className="update-detail-top">
+              <span className="update-category">
+                {selectedUpdate.category}
+              </span>
+              <span className="update-date">
+                {selectedUpdate.date}
+              </span>
+            </div>
+
+            <p className="update-description">
+              {selectedUpdate.description}
+            </p>
+
+            <h3>CHANGELOG</h3>
+
+            <ul className="update-changes">
+              {selectedUpdate.changes.map((change, index) => (
+                <li key={index}>{change}</li>
+              ))}
+            </ul>
+          </div>
+        </main>
+
+        <Footer />
+      </div>
+    );
+  }
+
+  // UPDATES PAGE
+  if (page === 'UPDATES') {
+    return (
+      <div className="app">
+        <SiteHeader />
+
+        <main>
+          <button
+            className="back-button"
+            onClick={() => setPage('HOME')}
+          >
+            ← BACK TO HOME
+          </button>
+
+          <div className="hero">
+            <div className="tag">GAME CHANGELOG</div>
+            <h1>GAME <span>UPDATES</span></h1>
+            <p>Follow the latest changes and additions to the game.</p>
+          </div>
+
+          <div className="updates-container">
+            <div className="updates-heading">
+              <h2>UPDATE HISTORY</h2>
+              <span>{updates.length} ENTRIES</span>
+            </div>
+
+            {updates.length > 0 ? (
+              <div className="updates-list">
+                {updates.map(update => (
+                  <article
+                    className="update-card"
+                    key={update.id}
+                    onClick={() => openUpdate(update)}
+                  >
+                    <div className="update-card-top">
+                      <span className="update-category">
+                        {update.category}
+                      </span>
+                      <span className="update-date">
+                        {update.date}
+                      </span>
+                    </div>
+
+                    <h3>{update.title}</h3>
+
+                    <p>{update.description}</p>
+
+                    <div className="update-card-bottom">
+                      <span>{update.version}</span>
+                      <strong>READ MORE ↗</strong>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <div className="profile-empty">
+                No updates have been added yet.
+              </div>
+            )}
+          </div>
+        </main>
+
+        <Footer />
       </div>
     );
   }
@@ -375,9 +507,7 @@ function App() {
           </div>
         </main>
 
-        <footer>
-          UNOFFICIAL COMMUNITY PROJECT · NOT AFFILIATED WITH THE GAME DEVELOPERS
-        </footer>
+        <Footer />
       </div>
     );
   }
@@ -436,9 +566,7 @@ function App() {
           </div>
         </main>
 
-        <footer>
-          UNOFFICIAL COMMUNITY PROJECT · NOT AFFILIATED WITH THE GAME DEVELOPERS
-        </footer>
+        <Footer />
       </div>
     );
   }
@@ -468,6 +596,8 @@ function App() {
                   setSort('name');
                   setRarity('all');
                   setPage(title);
+                } else if (title === 'UPDATES') {
+                  setPage('UPDATES');
                 }
               }}
             >
@@ -484,9 +614,7 @@ function App() {
         </div>
       </main>
 
-      <footer>
-        UNOFFICIAL COMMUNITY PROJECT · NOT AFFILIATED WITH THE GAME DEVELOPERS
-      </footer>
+      <Footer />
     </div>
   );
 }
