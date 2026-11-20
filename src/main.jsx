@@ -23,10 +23,12 @@ function App() {
     )
     .sort((a, b) => {
       if (sort === 'value') return b.value - a.value;
+
       if (sort === 'demand') {
         const order = { High: 3, Medium: 2, Low: 1 };
         return (order[b.demand] || 0) - (order[a.demand] || 0);
       }
+
       return a.name.localeCompare(b.name);
     });
 
@@ -124,11 +126,17 @@ function App() {
       <main>
         <div className="hero">
           <div className="tag">COMMUNITY DATABASE</div>
-          <h1>SKIBIDI VERSE <span>TD</span></h1>
+
+          <div className="game-brand">
+            <img src="/logo.jpg" alt="Skibidi Verse TD" />
+            <span>WIKI</span>
+          </div>
+
           <p>Your ultimate guide to units, values, updates and more.</p>
         </div>
 
         <h2>EXPLORE DATABASE</h2>
+
         <div className="grid">
           {sections.map(([icon, title, description]) => (
             <button
@@ -137,10 +145,12 @@ function App() {
               onClick={() => title === 'VALUES' && setPage('VALUES')}
             >
               <div className="section-icon">{icon}</div>
+
               <div>
                 <h3>{title}</h3>
                 <p>{description}</p>
               </div>
+
               <span className="arrow">↗</span>
             </button>
           ))}
