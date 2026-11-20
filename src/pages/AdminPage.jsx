@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase.js';
 
@@ -14,9 +13,16 @@ const emptyUnit = {
   max_level: '',
   attack_type: '',
   damage_type: '',
-  abilities: '[]',
-  levels: '[]'
+  abilities: '[]'
 };
+
+const createEmptyLevel = (number) => ({
+  level: number,
+  damage: '',
+  cooldown: '',
+  range: '',
+  upgradeCost: ''
+});
 
 function AdminPage({ units = [], onBack, onReload }) {
   const [session, setSession] = useState(null);
@@ -27,6 +33,7 @@ function AdminPage({ units = [], onBack, onReload }) {
   const [saving, setSaving] = useState(false);
 
   const [form, setForm] = useState(emptyUnit);
+  const [levels, setLevels] = useState([]);
   const [editingId, setEditingId] = useState(null);
 
   useEffect(() => {
@@ -66,10 +73,15 @@ function AdminPage({ units = [], onBack, onReload }) {
     }
   };
 
+  const resetForm = () => {
+    setForm(emptyUnit);
+    setLevels([]);
+    setEditingId(null);
+  };
+
   const logout = async () => {
     await supabase.auth.signOut();
-    setForm(emptyUnit);
-    setEditingId(null);
+    resetForm();
   };
 
   const change = (field, value) => {
@@ -77,6 +89,32 @@ function AdminPage({ units = [], onBack, onReload }) {
       ...previous,
       [field]: value
     }));
+  };
+
+  const changeLevel = (index, field, value) => {
+    setLevels(previous =>
+      previous.map((level, i) =>
+        i === index ? { ...level, [field]: value } : level
+      )
+    );
+  };
+
+  const addLevel = () => {
+    setLevels(previous => [
+      ...previous,
+      createEmptyLevel(previous.length + 1)
+    ]);
+  };
+
+  const removeLevel = (index) => {
+    setLevels(previous =>
+      previous
+        .filter((_, i) => i !== index)
+        .map((level, i) => ({
+          ...level,
+          level: i + 1
+        }))
+    );
   };
 
   const editUnit = (unit) => {
@@ -92,9 +130,18 @@ function AdminPage({ units = [], onBack, onReload }) {
       max_level: unit.max_level ?? unit.maxLevel ?? '',
       attack_type: unit.attack_type || unit.attackType || '',
       damage_type: unit.damage_type || unit.damageType || '',
-      abilities: JSON.stringify(unit.abilities || [], null, 2),
-      levels: JSON.stringify(unit.levels || [], null, 2)
+      abilities: JSON.stringify(unit.abilities || [], null, 2)
     });
+
+    setLevels(
+      (unit.levels || []).map((level, index) => ({
+        level: level.level ?? index + 1,
+        damage: level.damage ?? '',
+        cooldown: level.cooldown ?? '',
+        range: level.range ?? '',
+        upgradeCost: level.upgradeCost ?? ''
+      }))
+    );
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -104,17 +151,15 @@ function AdminPage({ units = [], onBack, onReload }) {
     setError('');
 
     let abilities;
-    let levels;
 
     try {
       abilities = JSON.parse(form.abilities);
-      levels = JSON.parse(form.levels);
 
-      if (!Array.isArray(abilities) || !Array.isArray(levels)) {
-        throw new Error('Abilities and levels must be JSON arrays.');
+      if (!Array.isArray(abilities)) {
+        throw new Error('Abilities must be a JSON array.');
       }
     } catch (err) {
-      setError('Invalid JSON: ' + err.message);
+      setError('Invalid abilities JSON: ' + err.message);
       return;
     }
 
@@ -122,6 +167,53 @@ function AdminPage({ units = [], onBack, onReload }) {
       setError('Unit name is required.');
       return;
     }
+
+    for (let i = 0; i < levels.length; i++) {
+      const level = levels[i];
+
+      if (
+        level.level === '' ||
+        level.damage === '' ||
+        level.cooldown === '' ||
+        level.range === ''
+      ) {
+        setError(`Fill in Level, Damage, Cooldown and Range for level ${i + 1}.`);
+        return;
+      }
+
+      if (
+        !Number.isFinite(Number(level.level)) ||
+        !Number.isFinite(Number(level.damage)) ||
+        !Number.isFinite(Number(level.cooldown)) ||
+        !Number.isFinite(Number(level.range)) ||
+        Number(level.level) < 1 ||
+        Number(level.damage) < 0 ||
+        Number(level.cooldown) <= 0 ||
+        Number(level.range) < 0
+      ) {
+        setError(`Invalid statistics in level ${i + 1}. Cooldown must be greater than zero.`);
+        return;
+      }
+
+      if (
+        level.upgradeCost !== '' &&
+        (!Number.isFinite(Number(level.upgradeCost)) ||
+          Number(level.upgradeCost) < 0)
+      ) {
+        setError(`Invalid upgrade cost in level ${i + 1}.`);
+        return;
+      }
+    }
+
+    const formattedLevels = levels.map(level => ({
+      level: Number(level.level),
+      damage: Number(level.damage),
+      cooldown: Number(level.cooldown),
+      range: Number(level.range),
+      ...(level.upgradeCost !== ''
+        ? { upgradeCost: Number(level.upgradeCost) }
+        : {})
+    }));
 
     const unitData = {
       name: form.name.trim(),
@@ -134,7 +226,7 @@ function AdminPage({ units = [], onBack, onReload }) {
       attack_type: form.attack_type,
       damage_type: form.damage_type,
       abilities,
-      levels
+      levels: formattedLevels
     };
 
     setSaving(true);
@@ -159,8 +251,7 @@ function AdminPage({ units = [], onBack, onReload }) {
       return;
     }
 
-    setForm(emptyUnit);
-    setEditingId(null);
+    resetForm();
     onReload?.();
   };
 
@@ -182,8 +273,7 @@ function AdminPage({ units = [], onBack, onReload }) {
     }
 
     if (editingId === id) {
-      setEditingId(null);
-      setForm(emptyUnit);
+      resetForm();
     }
 
     onReload?.();
@@ -343,13 +433,96 @@ function AdminPage({ units = [], onBack, onReload }) {
           spellCheck={false}
         />
 
-        <label>Levels (JSON array)</label>
-        <textarea
-          value={form.levels}
-          onChange={e => change('levels', e.target.value)}
-          rows={9}
-          spellCheck={false}
-        />
+        <div className="admin-level-section">
+          <div className="admin-level-heading">
+            <h2>LEVEL STATISTICS</h2>
+            <span>{levels.length} levels</span>
+          </div>
+
+          {levels.map((level, index) => (
+            <div className="admin-level-card" key={index}>
+              <div className="admin-level-card-heading">
+                <h3>LEVEL {index + 1}</h3>
+
+                <button
+                  type="button"
+                  className="admin-danger"
+                  onClick={() => removeLevel(index)}
+                >
+                  REMOVE
+                </button>
+              </div>
+
+              <div className="admin-form-grid">
+                <div>
+                  <label>Level number</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={level.level}
+                    onChange={e => changeLevel(index, 'level', e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label>Damage</label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="any"
+                    value={level.damage}
+                    onChange={e => changeLevel(index, 'damage', e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label>Cooldown</label>
+                  <input
+                    type="number"
+                    min="0.001"
+                    step="any"
+                    value={level.cooldown}
+                    onChange={e => changeLevel(index, 'cooldown', e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label>Range</label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="any"
+                    value={level.range}
+                    onChange={e => changeLevel(index, 'range', e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label>Upgrade cost</label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="any"
+                    value={level.upgradeCost}
+                    onChange={e => changeLevel(index, 'upgradeCost', e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+
+          <button
+            type="button"
+            className="admin-add-level"
+            onClick={addLevel}
+          >
+            + ADD LEVEL
+          </button>
+        </div>
 
         {error && <p className="admin-error">{error}</p>}
 
@@ -362,10 +535,7 @@ function AdminPage({ units = [], onBack, onReload }) {
             <button
               type="button"
               className="admin-secondary"
-              onClick={() => {
-                setEditingId(null);
-                setForm(emptyUnit);
-              }}
+              onClick={resetForm}
             >
               CANCEL
             </button>
