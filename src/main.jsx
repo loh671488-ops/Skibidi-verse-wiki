@@ -10,6 +10,7 @@ import Footer from './components/Footer.jsx';
 import UnitCard from './components/UnitCard.jsx';
 import UnitProfile from './pages/UnitProfile.jsx';
 import UpdatesPage from './pages/UpdatesPage.jsx';
+import UpdateDetail from './pages/UpdateDetail.jsx';
 
 function App() {
   const [page, setPage] = useState('HOME');
@@ -88,47 +89,10 @@ function App() {
   // UPDATE DETAILS PAGE
   if (page === 'UPDATE_DETAIL' && selectedUpdate) {
     return (
-      <div className="app">
-        <SiteHeader />
-        <main>
-          <button
-            className="back-button"
-            onClick={() => setPage('UPDATES')}
-          >
-            ← BACK TO UPDATES
-          </button>
-
-          <div className="hero">
-            <div className="tag">{selectedUpdate.version}</div>
-            <h1>{selectedUpdate.title}</h1>
-            <p>{selectedUpdate.date}</p>
-          </div>
-
-          <div className="update-detail">
-            <div className="update-detail-top">
-              <span className="update-category">
-                {selectedUpdate.category}
-              </span>
-              <span className="update-date">
-                {selectedUpdate.date}
-              </span>
-            </div>
-
-            <p className="update-description">
-              {selectedUpdate.description}
-            </p>
-
-            <h3>CHANGELOG</h3>
-
-            <ul className="update-changes">
-              {selectedUpdate.changes.map((change, index) => (
-                <li key={index}>{change}</li>
-              ))}
-            </ul>
-          </div>
-        </main>
-        <Footer />
-      </div>
+      <UpdateDetail
+        update={selectedUpdate}
+        onBack={() => setPage('UPDATES')}
+      />
     );
   }
 
