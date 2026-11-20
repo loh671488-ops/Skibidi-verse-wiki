@@ -5,14 +5,12 @@ import './style.css';
 import units from './data/units.json';
 import updates from './data/updates.js';
 
-import SiteHeader from './components/SiteHeader.jsx';
-import Footer from './components/Footer.jsx';
-
 import UnitProfile from './pages/UnitProfile.jsx';
 import UpdatesPage from './pages/UpdatesPage.jsx';
 import UpdateDetail from './pages/UpdateDetail.jsx';
 import ValuesPage from './pages/ValuesPage.jsx';
 import UnitsPage from './pages/UnitsPage.jsx';
+import HomePage from './pages/HomePage.jsx';
 
 function App() {
   const [page, setPage] = useState('HOME');
@@ -77,6 +75,17 @@ function App() {
     setPage('UPDATE_DETAIL');
   };
 
+  const navigate = (title) => {
+    if (title === 'VALUES' || title === 'UNITS') {
+      setSearch('');
+      setSort('name');
+      setRarity('all');
+      setPage(title);
+    } else if (title === 'UPDATES') {
+      setPage('UPDATES');
+    }
+  };
+
   // UNIT PROFILE
   if (page === 'UNIT' && selectedUnit) {
     return (
@@ -88,7 +97,7 @@ function App() {
     );
   }
 
-  // UPDATE DETAILS PAGE
+  // UPDATE DETAILS
   if (page === 'UPDATE_DETAIL' && selectedUpdate) {
     return (
       <UpdateDetail
@@ -98,7 +107,7 @@ function App() {
     );
   }
 
-  // UPDATES PAGE
+  // UPDATES
   if (page === 'UPDATES') {
     return (
       <UpdatesPage
@@ -109,7 +118,7 @@ function App() {
     );
   }
 
-  // VALUES PAGE
+  // VALUES
   if (page === 'VALUES') {
     return (
       <ValuesPage
@@ -126,7 +135,7 @@ function App() {
     );
   }
 
-  // UNITS PAGE
+  // UNITS
   if (page === 'UNITS') {
     return (
       <UnitsPage
@@ -145,51 +154,12 @@ function App() {
     );
   }
 
-  // HOME PAGE
+  // HOME
   return (
-    <div className="app">
-      <SiteHeader />
-
-      <main>
-        <div className="hero">
-          <div className="tag">COMMUNITY DATABASE</div>
-          <h1>SKIBIDI VERSE <span>TD</span></h1>
-          <p>Your ultimate guide to units, values, updates and more.</p>
-        </div>
-
-        <h2>EXPLORE DATABASE</h2>
-
-        <div className="grid">
-          {sections.map(([icon, title, description]) => (
-            <button
-              className="section"
-              key={title}
-              onClick={() => {
-                if (title === 'VALUES' || title === 'UNITS') {
-                  setSearch('');
-                  setSort('name');
-                  setRarity('all');
-                  setPage(title);
-                } else if (title === 'UPDATES') {
-                  setPage('UPDATES');
-                }
-              }}
-            >
-              <div className="section-icon">{icon}</div>
-
-              <div>
-                <h3>{title}</h3>
-                <p>{description}</p>
-              </div>
-
-              <span className="arrow">↗</span>
-            </button>
-          ))}
-        </div>
-      </main>
-
-      <Footer />
-    </div>
+    <HomePage
+      sections={sections}
+      onNavigate={navigate}
+    />
   );
 }
 
