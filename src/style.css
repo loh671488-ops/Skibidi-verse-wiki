@@ -34,7 +34,7 @@ body {
   justify-content: flex-start;
   align-items: flex-start;
   padding: 18px 5%;
-  min-height: 120px;
+  min-height: 155px;
   border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
@@ -47,8 +47,8 @@ body {
 
 .site-brand img {
   display: block;
-  width: 110px;
-  max-width: 25vw;
+  width: 150px;
+  max-width: 35vw;
   height: auto;
   object-fit: contain;
 }
@@ -391,12 +391,12 @@ footer {
 @media (max-width: 600px) {
   .site-header {
     padding: 16px 18px;
-    min-height: 105px;
+    min-height: 130px;
   }
 
   .site-brand img {
-    width: 90px;
-    max-width: 30vw;
+    width: 120px;
+    max-width: 38vw;
   }
 
   .site-brand span {
