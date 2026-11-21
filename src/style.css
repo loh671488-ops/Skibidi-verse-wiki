@@ -1333,6 +1333,53 @@ footer {
   background: rgba(232, 189, 101, 0.1);
 }
 
+/* SHINY RAINBOW BORDER */
+
+.unit-image.shiny-image {
+  position: relative;
+  isolation: isolate;
+}
+
+.unit-image.shiny-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 3px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 0deg,
+    #ff0000,
+    #ff8c00,
+    #ffff00,
+    #00ff00,
+    #00ffff,
+    #0000ff,
+    #9400ff,
+    #ff00ff,
+    #ff0000
+  );
+
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  pointer-events: none;
+  animation: shiny-rainbow-spin 3s linear infinite;
+}
+
+@keyframes shiny-rainbow-spin {
+  from {
+    filter: hue-rotate(0deg);
+  }
+
+  to {
+    filter: hue-rotate(360deg);
+  }
+}
+
+
 
 
 
