@@ -182,7 +182,6 @@ function AdminPage({ units = [], onBack, onReload }) {
   const [activeVersion, setActiveVersion] = useState('normal');
   const [editingId, setEditingId] = useState(null);
 
-  // PRICE HISTORY
   const [priceHistory, setPriceHistory] = useState([]);
   const [historyValue, setHistoryValue] = useState('');
   const [historyLoading, setHistoryLoading] = useState(false);
@@ -205,7 +204,6 @@ function AdminPage({ units = [], onBack, onReload }) {
 
   const isAdmin = session?.user?.id === ADMIN_ID;
 
-  // LOAD PRICE HISTORY
   const loadPriceHistory = async () => {
     if (!editingId || !isAdmin) {
       setPriceHistory([]);
@@ -235,16 +233,17 @@ function AdminPage({ units = [], onBack, onReload }) {
     loadPriceHistory();
   }, [editingId, activeVersion, isAdmin]);
 
-  // ADD PRICE RECORD
-  const addPriceHistory = async (e) => {
-    e.preventDefault();
-
+  const addPriceHistory = async () => {
     if (!editingId) {
       setError('Save the unit first before adding price history.');
       return;
     }
 
-    if (historyValue === '' || !Number.isFinite(Number(historyValue)) || Number(historyValue) < 0) {
+    if (
+      historyValue === '' ||
+      !Number.isFinite(Number(historyValue)) ||
+      Number(historyValue) < 0
+    ) {
       setError('Enter a valid price.');
       return;
     }
@@ -271,7 +270,6 @@ function AdminPage({ units = [], onBack, onReload }) {
     await loadPriceHistory();
   };
 
-  // DELETE PRICE RECORD
   const deletePriceHistory = async (id) => {
     if (!window.confirm('Delete this price history record?')) {
       return;
@@ -876,7 +874,7 @@ function AdminPage({ units = [], onBack, onReload }) {
             </p>
           ) : (
             <>
-              <form onSubmit={addPriceHistory}>
+              <div>
                 <label>New {activeVersion.toUpperCase()} value</label>
 
                 <div className="admin-form-grid">
@@ -888,21 +886,21 @@ function AdminPage({ units = [], onBack, onReload }) {
                       value={historyValue}
                       onChange={e => setHistoryValue(e.target.value)}
                       placeholder="Enter new value"
-                      required
                     />
                   </div>
 
                   <div>
                     <button
-                      type="submit"
+                      type="button"
                       className="admin-primary"
                       disabled={historySaving}
+                      onClick={addPriceHistory}
                     >
                       {historySaving ? 'ADDING...' : '+ ADD PRICE'}
                     </button>
                   </div>
                 </div>
-              </form>
+              </div>
 
               <div style={{ marginTop: '20px' }}>
                 <h3 style={{ marginBottom: '12px' }}>
@@ -987,6 +985,7 @@ function AdminPage({ units = [], onBack, onReload }) {
 
             <div className="admin-unit-actions">
               <button
+                type="button"
                 className="admin-secondary"
                 onClick={() => editUnit(unit)}
               >
@@ -994,6 +993,7 @@ function AdminPage({ units = [], onBack, onReload }) {
               </button>
 
               <button
+                type="button"
                 className="admin-danger"
                 onClick={() => deleteUnit(unit.id)}
               >
