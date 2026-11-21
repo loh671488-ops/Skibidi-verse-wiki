@@ -1,11 +1,14 @@
-import { useState } from 'react';
 import SiteHeader from '../components/SiteHeader.jsx';
 import Footer from '../components/Footer.jsx';
 
-function UnitProfile({ unit, onBack, formatNumber }) {
+function UnitProfile({
+  unit,
+  onBack,
+  formatNumber,
+  activeVersion,
+  setActiveVersion
+}) {
   const hasShiny = Boolean(unit.shiny);
-
-  const [activeVersion, setActiveVersion] = useState('normal');
 
   const isShiny = hasShiny && activeVersion === 'shiny';
   const version = isShiny ? unit.shiny : unit;
@@ -103,12 +106,16 @@ function UnitProfile({ unit, onBack, formatNumber }) {
             <div className="unit-profile-stats">
               <div className="profile-stat">
                 <small>ATTACK TYPE</small>
-                <strong>{version.attack_type ?? version.attackType ?? 'Unknown'}</strong>
+                <strong>
+                  {version.attack_type ?? version.attackType ?? 'Unknown'}
+                </strong>
               </div>
 
               <div className="profile-stat">
                 <small>DAMAGE TYPE</small>
-                <strong>{version.damage_type ?? version.damageType ?? 'Unknown'}</strong>
+                <strong>
+                  {version.damage_type ?? version.damageType ?? 'Unknown'}
+                </strong>
               </div>
             </div>
           </div>
