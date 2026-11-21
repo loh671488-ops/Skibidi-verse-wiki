@@ -1,4 +1,3 @@
-
 import SiteHeader from '../components/SiteHeader.jsx';
 import Footer from '../components/Footer.jsx';
 import UnitCard from '../components/UnitCard.jsx';
@@ -14,7 +13,9 @@ function UnitsPage({
   filteredUnits,
   onOpenUnit,
   formatNumber,
-  onBack
+  onBack,
+  activeVersion,
+  setActiveVersion
 }) {
   return (
     <div className="app">
@@ -42,6 +43,22 @@ function UnitsPage({
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
+
+          <div className="version-switcher">
+            <button
+              className={activeVersion === 'normal' ? 'active' : ''}
+              onClick={() => setActiveVersion('normal')}
+            >
+              NORMAL
+            </button>
+
+            <button
+              className={activeVersion === 'shiny' ? 'active' : ''}
+              onClick={() => setActiveVersion('shiny')}
+            >
+              SHINY
+            </button>
+          </div>
 
           <div className="values-toolbar">
             <span>ALL UNITS · {filteredUnits.length}</span>
@@ -72,6 +89,7 @@ function UnitsPage({
               <UnitCard
                 key={unit.id}
                 unit={unit}
+                activeVersion={activeVersion}
                 onOpen={onOpenUnit}
                 formatNumber={formatNumber}
               />
