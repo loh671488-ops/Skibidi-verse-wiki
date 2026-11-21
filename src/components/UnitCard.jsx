@@ -1,5 +1,21 @@
-function UnitCard({ unit, showValue = false, onOpen, formatNumber }) {
-  const demand = Math.min(10, Math.max(1, Number(unit.demand) || 5));
+function UnitCard({
+  unit,
+  showValue = false,
+  onOpen,
+  formatNumber,
+  activeVersion = 'normal'
+}) {
+  const version =
+    activeVersion === 'shiny' && unit.shiny
+      ? unit.shiny
+      : unit;
+
+  const maxLevel = version.max_level ?? version.maxLevel ?? 'Unknown';
+
+  const rawDemand = Number(version.demand);
+  const demand = Number.isFinite(rawDemand) && rawDemand > 0
+    ? Math.min(10, Math.max(1, rawDemand))
+    : 5;
 
   return (
     <article
@@ -20,14 +36,16 @@ function UnitCard({ unit, showValue = false, onOpen, formatNumber }) {
         <span className="unit-rarity">
           {unit.rarity || 'Unknown rarity'}
         </span>
-        <small>Maximum level: {unit.maxLevel ?? 'Unknown'}</small>
+        <small>Maximum level: {maxLevel}</small>
       </div>
 
       {showValue ? (
         <>
           <div className="unit-value">
             <small>VALUE</small>
-            <strong>{formatNumber(unit.value || 0)}</strong>
+            <strong>
+              {formatNumber(version.value ?? 0)}
+            </strong>
           </div>
 
           <div className="unit-demand">
