@@ -1,10 +1,18 @@
+import { useState } from 'react';
 import SiteHeader from '../components/SiteHeader.jsx';
 import Footer from '../components/Footer.jsx';
 
 function UnitProfile({ unit, onBack, formatNumber }) {
-  const levels = unit.levels || [];
-  const abilities = unit.abilities || [];
-  const maxLevel = Number(unit.maxLevel);
+  const hasShiny = Boolean(unit.shiny);
+
+  const [activeVersion, setActiveVersion] = useState('normal');
+
+  const isShiny = hasShiny && activeVersion === 'shiny';
+  const version = isShiny ? unit.shiny : unit;
+
+  const levels = version.levels || [];
+  const abilities = version.abilities || [];
+  const maxLevel = Number(version.max_level ?? version.maxLevel);
 
   const hasMaxLevel = levels.some((level, index) =>
     Number(level.level ?? index + 1) === maxLevel
@@ -48,24 +56,44 @@ function UnitProfile({ unit, onBack, formatNumber }) {
             </div>
           </div>
 
+          {hasShiny && (
+            <div className="version-switcher">
+              <button
+                className={!isShiny ? 'active' : ''}
+                onClick={() => setActiveVersion('normal')}
+              >
+                NORMAL
+              </button>
+
+              <button
+                className={isShiny ? 'active' : ''}
+                onClick={() => setActiveVersion('shiny')}
+              >
+                SHINY
+              </button>
+            </div>
+          )}
+
           <div className="unit-profile-stats">
             <div className="profile-stat">
               <small>MAX LEVEL</small>
-              <strong>{unit.maxLevel ?? 'Unknown'}</strong>
+              <strong>
+                {version.max_level ?? version.maxLevel ?? 'Unknown'}
+              </strong>
             </div>
 
             <div className="profile-stat">
               <small>VALUE</small>
               <strong>
-                {unit.value !== undefined
-                  ? formatNumber(unit.value)
+                {version.value !== undefined && version.value !== null
+                  ? formatNumber(version.value)
                   : 'Unknown'}
               </strong>
             </div>
 
             <div className="profile-stat">
               <small>DEMAND</small>
-              <strong>{unit.demand || 'Unknown'}</strong>
+              <strong>{version.demand ?? 'Unknown'}</strong>
             </div>
           </div>
 
@@ -75,7 +103,12 @@ function UnitProfile({ unit, onBack, formatNumber }) {
             <div className="unit-profile-stats">
               <div className="profile-stat">
                 <small>ATTACK TYPE</small>
-                <strong>{unit.attackType || 'Unknown'}</strong>
+                <strong>{version.attack_type ?? version.attackType ?? 'Unknown'}</strong>
+              </div>
+
+              <div className="profile-stat">
+                <small>DAMAGE TYPE</small>
+                <strong>{version.damage_type ?? version.damageType ?? 'Unknown'}</strong>
               </div>
             </div>
           </div>
