@@ -1379,6 +1379,45 @@ footer {
   }
 }
 
+/* VALUE HISTORY CHART */
+
+.price-chart-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 15px 0;
+}
+
+.price-chart-info span {
+  color: #999;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.price-chart-info strong {
+  color: #e8bd65;
+  font-size: 22px;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.price-chart-wrap {
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid #30313a;
+  border-radius: 10px;
+  background: #101117;
+  padding: 10px;
+}
+
+.price-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+
 
 
 
