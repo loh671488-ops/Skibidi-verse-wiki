@@ -1269,4 +1269,41 @@ footer {
   }
 }
 
+/* DEMAND SCALE */
+
+.demand-display {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 5px;
+}
+
+.demand-bars {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.unit-demand .demand-bars span {
+  display: block;
+  width: 6px;
+  min-width: 6px;
+  height: 19px;
+  padding: 0;
+  border-radius: 2px;
+  background: #30313a;
+  transition: background 0.2s ease;
+}
+
+.unit-demand .demand-bars span.filled {
+  background: #e8bd65;
+}
+
+.demand-display strong {
+  color: #e8bd65;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+
 
