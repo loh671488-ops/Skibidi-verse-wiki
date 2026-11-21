@@ -7,7 +7,7 @@ const emptyUnit = {
   name: '',
   rarity: 'Mythic',
   value: '',
-  demand: 'Medium',
+  demand: 5,
   image: '',
   description: '',
   max_level: '',
@@ -124,7 +124,7 @@ function AdminPage({ units = [], onBack, onReload }) {
       name: unit.name || '',
       rarity: unit.rarity || 'Mythic',
       value: unit.value ?? '',
-      demand: unit.demand || 'Medium',
+      demand: Number(unit.demand) || 5,
       image: unit.image || '',
       description: unit.description || '',
       max_level: unit.max_level ?? unit.maxLevel ?? '',
@@ -165,6 +165,13 @@ function AdminPage({ units = [], onBack, onReload }) {
 
     if (!form.name.trim()) {
       setError('Unit name is required.');
+      return;
+    }
+
+    const demand = Number(form.demand);
+
+    if (!Number.isInteger(demand) || demand < 1 || demand > 10) {
+      setError('Demand must be a number between 1 and 10.');
       return;
     }
 
@@ -219,7 +226,7 @@ function AdminPage({ units = [], onBack, onReload }) {
       name: form.name.trim(),
       rarity: form.rarity,
       value: form.value === '' ? null : Number(form.value),
-      demand: form.demand,
+      demand,
       image: form.image.trim(),
       description: form.description,
       max_level: form.max_level === '' ? null : Number(form.max_level),
@@ -372,15 +379,29 @@ function AdminPage({ units = [], onBack, onReload }) {
           </div>
 
           <div>
-            <label>Demand</label>
-            <select
+            <label>Demand: {form.demand}/10</label>
+            <input
+              type="range"
+              min="1"
+              max="10"
+              step="1"
               value={form.demand}
-              onChange={e => change('demand', e.target.value)}
-            >
-              {['High', 'Medium', 'Low'].map(item => (
-                <option key={item}>{item}</option>
-              ))}
-            </select>
+              onChange={e => change('demand', Number(e.target.value))}
+              style={{
+                width: '100%',
+                accentColor: '#e8bd65',
+                cursor: 'pointer'
+              }}
+            />
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              color: '#999',
+              fontSize: '12px'
+            }}>
+              <span>1 — LOW</span>
+              <span>10 — HIGH</span>
+            </div>
           </div>
 
           <div>
