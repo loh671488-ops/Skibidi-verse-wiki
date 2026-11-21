@@ -182,6 +182,12 @@ function AdminPage({ units = [], onBack, onReload }) {
   const [activeVersion, setActiveVersion] = useState('normal');
   const [editingId, setEditingId] = useState(null);
 
+  // PRICE HISTORY
+  const [priceHistory, setPriceHistory] = useState([]);
+  const [historyValue, setHistoryValue] = useState('');
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historySaving, setHistorySaving] = useState(false);
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
@@ -198,6 +204,91 @@ function AdminPage({ units = [], onBack, onReload }) {
   }, []);
 
   const isAdmin = session?.user?.id === ADMIN_ID;
+
+  // LOAD PRICE HISTORY
+  const loadPriceHistory = async () => {
+    if (!editingId || !isAdmin) {
+      setPriceHistory([]);
+      return;
+    }
+
+    setHistoryLoading(true);
+
+    const { data, error } = await supabase
+      .from('unit_price_history')
+      .select('*')
+      .eq('unit_id', editingId)
+      .eq('version', activeVersion)
+      .order('recorded_at', { ascending: false });
+
+    if (error) {
+      setError(`Price history: ${error.message}`);
+      setPriceHistory([]);
+    } else {
+      setPriceHistory(data || []);
+    }
+
+    setHistoryLoading(false);
+  };
+
+  useEffect(() => {
+    loadPriceHistory();
+  }, [editingId, activeVersion, isAdmin]);
+
+  // ADD PRICE RECORD
+  const addPriceHistory = async (e) => {
+    e.preventDefault();
+
+    if (!editingId) {
+      setError('Save the unit first before adding price history.');
+      return;
+    }
+
+    if (historyValue === '' || !Number.isFinite(Number(historyValue)) || Number(historyValue) < 0) {
+      setError('Enter a valid price.');
+      return;
+    }
+
+    setHistorySaving(true);
+    setError('');
+
+    const { error } = await supabase
+      .from('unit_price_history')
+      .insert([{
+        unit_id: editingId,
+        version: activeVersion,
+        value: Number(historyValue)
+      }]);
+
+    setHistorySaving(false);
+
+    if (error) {
+      setError(error.message);
+      return;
+    }
+
+    setHistoryValue('');
+    await loadPriceHistory();
+  };
+
+  // DELETE PRICE RECORD
+  const deletePriceHistory = async (id) => {
+    if (!window.confirm('Delete this price history record?')) {
+      return;
+    }
+
+    const { error } = await supabase
+      .from('unit_price_history')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      setError(error.message);
+      return;
+    }
+
+    await loadPriceHistory();
+  };
 
   const login = async (e) => {
     e.preventDefault();
@@ -228,6 +319,8 @@ function AdminPage({ units = [], onBack, onReload }) {
     setActiveVersion('normal');
     setEditingId(null);
     setError('');
+    setPriceHistory([]);
+    setHistoryValue('');
   };
 
   const logout = async () => {
@@ -305,6 +398,8 @@ function AdminPage({ units = [], onBack, onReload }) {
     }
 
     setActiveVersion('normal');
+    setPriceHistory([]);
+    setHistoryValue('');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -635,7 +730,7 @@ function AdminPage({ units = [], onBack, onReload }) {
           <div className="admin-actions">
             <button
               type="button"
-              className={shinyEnabled ? 'admin-secondary' : 'admin-primary'}
+              className={activeVersion === 'normal' ? 'admin-primary' : 'admin-secondary'}
               onClick={() => setActiveVersion('normal')}
             >
               NORMAL
@@ -643,7 +738,7 @@ function AdminPage({ units = [], onBack, onReload }) {
 
             <button
               type="button"
-              className="admin-secondary"
+              className={activeVersion === 'shiny' ? 'admin-primary' : 'admin-secondary'}
               onClick={() => {
                 setShinyEnabled(true);
                 setActiveVersion('shiny');
@@ -767,6 +862,88 @@ function AdminPage({ units = [], onBack, onReload }) {
             Enable the Shiny version checkbox to save Shiny data.
           </p>
         )}
+
+        {/* PRICE HISTORY */}
+        <div className="admin-level-section">
+          <div className="admin-level-heading">
+            <h2>VALUE HISTORY</h2>
+            <span>{activeVersion.toUpperCase()}</span>
+          </div>
+
+          {editingId === null ? (
+            <p className="admin-subtitle">
+              Save the unit first to start adding price history.
+            </p>
+          ) : (
+            <>
+              <form onSubmit={addPriceHistory}>
+                <label>New {activeVersion.toUpperCase()} value</label>
+
+                <div className="admin-form-grid">
+                  <div>
+                    <input
+                      type="number"
+                      min="0"
+                      step="any"
+                      value={historyValue}
+                      onChange={e => setHistoryValue(e.target.value)}
+                      placeholder="Enter new value"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <button
+                      type="submit"
+                      className="admin-primary"
+                      disabled={historySaving}
+                    >
+                      {historySaving ? 'ADDING...' : '+ ADD PRICE'}
+                    </button>
+                  </div>
+                </div>
+              </form>
+
+              <div style={{ marginTop: '20px' }}>
+                <h3 style={{ marginBottom: '12px' }}>
+                  PRICE RECORDS ({priceHistory.length})
+                </h3>
+
+                {historyLoading ? (
+                  <p className="admin-subtitle">Loading history...</p>
+                ) : priceHistory.length === 0 ? (
+                  <p className="admin-subtitle">
+                    No price history yet.
+                  </p>
+                ) : (
+                  priceHistory.map(record => (
+                    <div
+                      className="admin-unit-row"
+                      key={record.id}
+                    >
+                      <div>
+                        <strong>
+                          {Number(record.value).toLocaleString('en-US')}
+                        </strong>
+                        <small>
+                          {new Date(record.recorded_at).toLocaleString()}
+                        </small>
+                      </div>
+
+                      <button
+                        type="button"
+                        className="admin-danger"
+                        onClick={() => deletePriceHistory(record.id)}
+                      >
+                        DELETE
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+            </>
+          )}
+        </div>
 
         {error && <p className="admin-error">{error}</p>}
 
