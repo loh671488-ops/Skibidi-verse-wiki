@@ -5,10 +5,14 @@ function UnitCard({
   formatNumber,
   activeVersion = 'normal'
 }) {
+  const hasShiny = Boolean(unit.shiny);
+
   const version =
-    activeVersion === 'shiny' && unit.shiny
+    activeVersion === 'shiny' && hasShiny
       ? unit.shiny
       : unit;
+
+  const isShinyActive = activeVersion === 'shiny' && hasShiny;
 
   const maxLevel = version.max_level ?? version.maxLevel ?? 'Unknown';
 
@@ -23,7 +27,7 @@ function UnitCard({
       onClick={() => onOpen(unit)}
       style={{ cursor: 'pointer' }}
     >
-      <div className="unit-image">
+      <div className={`unit-image ${isShinyActive ? 'shiny-image' : ''}`}>
         {unit.image ? (
           <img src={unit.image} alt={unit.name} />
         ) : (
