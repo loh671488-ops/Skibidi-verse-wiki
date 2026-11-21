@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabase.js';
 import SiteHeader from '../components/SiteHeader.jsx';
 import Footer from '../components/Footer.jsx';
 
@@ -20,6 +22,110 @@ function UnitProfile({
   const hasMaxLevel = levels.some((level, index) =>
     Number(level.level ?? index + 1) === maxLevel
   );
+
+  // PRICE HISTORY
+  const [priceHistory, setPriceHistory] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(true);
+  const [historyError, setHistoryError] = useState('');
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadHistory = async () => {
+      setHistoryLoading(true);
+      setHistoryError('');
+      setPriceHistory([]);
+
+      const { data, error } = await supabase
+        .from('unit_price_history')
+        .select('id, value, recorded_at')
+        .eq('unit_id', unit.id)
+        .eq('version', isShiny ? 'shiny' : 'normal')
+        .order('recorded_at', { ascending: true });
+
+      if (cancelled) return;
+
+      if (error) {
+        setHistoryError(error.message);
+      } else {
+        setPriceHistory(data || []);
+      }
+
+      setHistoryLoading(false);
+    };
+
+    loadHistory();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [unit.id, isShiny]);
+
+  // CHART DATA
+  const chartWidth = 700;
+  const chartHeight = 260;
+  const chartPadding = {
+    top: 25,
+    right: 25,
+    bottom: 45,
+    left: 65
+  };
+
+  const plotWidth = chartWidth - chartPadding.left - chartPadding.right;
+  const plotHeight = chartHeight - chartPadding.top - chartPadding.bottom;
+
+  const values = priceHistory.map(record => Number(record.value));
+
+  const minValue = values.length
+    ? Math.min(...values)
+    : 0;
+
+  const maxValue = values.length
+    ? Math.max(...values)
+    : 0;
+
+  const valueDifference = maxValue - minValue;
+  const chartMin = valueDifference === 0
+    ? Math.max(0, minValue - (minValue * 0.1 || 1))
+    : Math.max(0, minValue - valueDifference * 0.15);
+
+  const chartMax = valueDifference === 0
+    ? maxValue + (maxValue * 0.1 || 1)
+    : maxValue + valueDifference * 0.15;
+
+  const chartRange = chartMax - chartMin || 1;
+
+  const chartPoints = priceHistory.map((record, index) => {
+    const x = priceHistory.length === 1
+      ? chartPadding.left + plotWidth / 2
+      : chartPadding.left +
+        (index / (priceHistory.length - 1)) * plotWidth;
+
+    const y = chartPadding.top +
+      (1 - (Number(record.value) - chartMin) / chartRange) * plotHeight;
+
+    return {
+      ...record,
+      x,
+      y
+    };
+  });
+
+  const chartLine = chartPoints
+    .map(point => `${point.x},${point.y}`)
+    .join(' ');
+
+  const chartArea = chartPoints.length > 1
+    ? `${chartPadding.left},${chartPadding.top + plotHeight} ${chartLine} ${chartPadding.left + plotWidth},${chartPadding.top + plotHeight}`
+    : '';
+
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: '2-digit'
+    });
+  };
 
   return (
     <div className="app">
@@ -98,6 +204,142 @@ function UnitProfile({
               <small>DEMAND</small>
               <strong>{version.demand ?? 'Unknown'}</strong>
             </div>
+          </div>
+
+          {/* VALUE HISTORY */}
+          <div className="unit-profile-section">
+            <h3>VALUE HISTORY</h3>
+
+            {historyLoading ? (
+              <div className="profile-empty">
+                Loading price history...
+              </div>
+            ) : historyError ? (
+              <div className="profile-empty">
+                Could not load price history: {historyError}
+              </div>
+            ) : priceHistory.length === 0 ? (
+              <div className="profile-empty">
+                No price history available for this version yet.
+              </div>
+            ) : (
+              <>
+                <div className="price-chart-info">
+                  <span>
+                    {isShiny ? 'SHINY' : 'NORMAL'} PRICE
+                  </span>
+
+                  <strong>
+                    {formatNumber(priceHistory[priceHistory.length - 1].value)}
+                  </strong>
+                </div>
+
+                <div className="price-chart-wrap">
+                  <svg
+                    viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+                    className="price-chart"
+                    role="img"
+                    aria-label="Unit price history chart"
+                  >
+                    {[0, 1, 2, 3, 4].map(index => {
+                      const y = chartPadding.top +
+                        (index / 4) * plotHeight;
+
+                      const value = chartMax -
+                        (index / 4) * chartRange;
+
+                      return (
+                        <g key={index}>
+                          <line
+                            x1={chartPadding.left}
+                            y1={y}
+                            x2={chartWidth - chartPadding.right}
+                            y2={y}
+                            stroke="#30313a"
+                            strokeDasharray="4 5"
+                          />
+
+                          <text
+                            x={chartPadding.left - 10}
+                            y={y + 4}
+                            fill="#999"
+                            fontSize="11"
+                            textAnchor="end"
+                          >
+                            {formatNumber(value)}
+                          </text>
+                        </g>
+                      );
+                    })}
+
+                    {chartArea && (
+                      <polygon
+                        points={chartArea}
+                        fill="rgba(232, 189, 101, 0.10)"
+                      />
+                    )}
+
+                    {chartPoints.length > 1 && (
+                      <polyline
+                        points={chartLine}
+                        fill="none"
+                        stroke="#e8bd65"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    )}
+
+                    {chartPoints.map((point, index) => (
+                      <g key={point.id}>
+                        <circle
+                          cx={point.x}
+                          cy={point.y}
+                          r="5"
+                          fill="#e8bd65"
+                          stroke="#15161d"
+                          strokeWidth="2"
+                        >
+                          <title>
+                            {formatNumber(point.value)} — {new Date(point.recorded_at).toLocaleString()}
+                          </title>
+                        </circle>
+                      </g>
+                    ))}
+
+                    {chartPoints.length > 0 && (
+                      <>
+                        <text
+                          x={chartPadding.left}
+                          y={chartHeight - 12}
+                          fill="#999"
+                          fontSize="11"
+                          textAnchor="start"
+                        >
+                          {formatDate(chartPoints[0].recorded_at)}
+                        </text>
+
+                        {chartPoints.length > 1 && (
+                          <text
+                            x={chartWidth - chartPadding.right}
+                            y={chartHeight - 12}
+                            fill="#999"
+                            fontSize="11"
+                            textAnchor="end"
+                          >
+                            {formatDate(chartPoints[chartPoints.length - 1].recorded_at)}
+                          </text>
+                        )}
+                      </>
+                    )}
+                  </svg>
+                </div>
+
+                <p className="profile-note">
+                  {priceHistory.length} price records. Tap a chart point to see its exact value and date.
+                </p>
+              </>
+            )}
           </div>
 
           <div className="unit-profile-section">
