@@ -32,9 +32,19 @@ function UnitCard({ unit, showValue = false, onOpen, formatNumber }) {
 
           <div className="unit-demand">
             <small>DEMAND</small>
-            <span className="demand-level">
-              {demand}/10
-            </span>
+
+            <div className="demand-display">
+              <div className="demand-bars">
+                {Array.from({ length: 10 }, (_, i) => (
+                  <span
+                    key={i}
+                    className={i < demand ? 'filled' : ''}
+                  />
+                ))}
+              </div>
+
+              <strong>{demand}/10</strong>
+            </div>
           </div>
         </>
       ) : (
