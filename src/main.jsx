@@ -21,6 +21,7 @@ function App() {
   const [rarity, setRarity] = useState('all');
   const [selectedUnit, setSelectedUnit] = useState(null);
   const [selectedUpdate, setSelectedUpdate] = useState(null);
+  const [activeVersion, setActiveVersion] = useState('normal');
 
   const [units, setUnits] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -98,6 +99,12 @@ function App() {
     });
   };
 
+  const getVersion = (unit) => {
+    return activeVersion === 'shiny' && unit.shiny
+      ? unit.shiny
+      : unit;
+  };
+
   const filteredUnits = units
     .filter(unit =>
       unit.name.toLowerCase().includes(search.toLowerCase())
@@ -106,13 +113,17 @@ function App() {
       rarity === 'all' || unit.rarity === rarity
     )
     .sort((a, b) => {
+      const versionA = getVersion(a);
+      const versionB = getVersion(b);
+
       if (sort === 'value') {
-        return (b.value || 0) - (a.value || 0);
+        return (Number(versionB.value) || 0) -
+          (Number(versionA.value) || 0);
       }
 
       if (sort === 'demand') {
-        const order = { High: 3, Medium: 2, Low: 1 };
-        return (order[b.demand] || 0) - (order[a.demand] || 0);
+        return (Number(versionB.demand) || 0) -
+          (Number(versionA.demand) || 0);
       }
 
       return a.name.localeCompare(b.name);
@@ -201,6 +212,8 @@ function App() {
         unit={selectedUnit}
         onBack={() => setPage(previousPage)}
         formatNumber={formatNumber}
+        activeVersion={activeVersion}
+        setActiveVersion={setActiveVersion}
       />
     );
   }
@@ -227,7 +240,6 @@ function App() {
   if (page === 'VALUES') {
     return (
       <ValuesPage
-        units={units}
         search={search}
         setSearch={setSearch}
         sort={sort}
@@ -236,6 +248,8 @@ function App() {
         onOpenUnit={openUnit}
         formatNumber={formatNumber}
         onBack={() => setPage('HOME')}
+        activeVersion={activeVersion}
+        setActiveVersion={setActiveVersion}
       />
     );
   }
@@ -254,6 +268,8 @@ function App() {
         onOpenUnit={openUnit}
         formatNumber={formatNumber}
         onBack={() => setPage('HOME')}
+        activeVersion={activeVersion}
+        setActiveVersion={setActiveVersion}
       />
     );
   }
