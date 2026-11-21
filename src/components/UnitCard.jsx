@@ -1,4 +1,6 @@
 function UnitCard({ unit, showValue = false, onOpen, formatNumber }) {
+  const demand = Math.min(10, Math.max(1, Number(unit.demand) || 5));
+
   return (
     <article
       className="unit-card"
@@ -30,8 +32,8 @@ function UnitCard({ unit, showValue = false, onOpen, formatNumber }) {
 
           <div className="unit-demand">
             <small>DEMAND</small>
-            <span className={`demand-${(unit.demand || 'low').toLowerCase()}`}>
-              {unit.demand || 'Unknown'}
+            <span className="demand-level">
+              {demand}/10
             </span>
           </div>
         </>
