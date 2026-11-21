@@ -1305,5 +1305,34 @@ footer {
   white-space: nowrap;
 }
 
+/* NORMAL / SHINY SWITCHER */
+
+.version-switcher {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 25px 0;
+}
+
+.version-switcher button {
+  padding: 11px 25px;
+  border: 1px solid #3b3b43;
+  border-radius: 8px;
+  background: #15161d;
+  color: #999;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.version-switcher button.active {
+  color: #e8bd65;
+  border-color: #e8bd65;
+  background: rgba(232, 189, 101, 0.1);
+}
+
+
 
 
