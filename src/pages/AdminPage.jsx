@@ -16,6 +16,15 @@ const emptyUnit = {
   abilities: '[]'
 };
 
+const emptyShiny = {
+  value: '',
+  demand: 5,
+  max_level: '',
+  attack_type: '',
+  damage_type: '',
+  abilities: '[]'
+};
+
 const createEmptyLevel = (number) => ({
   level: number,
   damage: '',
@@ -23,6 +32,137 @@ const createEmptyLevel = (number) => ({
   range: '',
   upgradeCost: ''
 });
+
+function LevelEditor({ levels, setLevels, title }) {
+  const changeLevel = (index, field, value) => {
+    setLevels(previous =>
+      previous.map((level, i) =>
+        i === index ? { ...level, [field]: value } : level
+      )
+    );
+  };
+
+  const addLevel = () => {
+    setLevels(previous => [
+      ...previous,
+      createEmptyLevel(previous.length + 1)
+    ]);
+  };
+
+  const removeLevel = (index) => {
+    setLevels(previous =>
+      previous
+        .filter((_, i) => i !== index)
+        .map((level, i) => ({
+          ...level,
+          level: i + 1
+        }))
+    );
+  };
+
+  return (
+    <div className="admin-level-section">
+      <div className="admin-level-heading">
+        <h2>{title}</h2>
+        <span>{levels.length} levels</span>
+      </div>
+
+      {levels.map((level, index) => (
+        <div className="admin-level-card" key={index}>
+          <div className="admin-level-card-heading">
+            <h3>LEVEL {index + 1}</h3>
+
+            <button
+              type="button"
+              className="admin-danger"
+              onClick={() => removeLevel(index)}
+            >
+              REMOVE
+            </button>
+          </div>
+
+          <div className="admin-form-grid">
+            <div>
+              <label>Level number</label>
+              <input
+                type="number"
+                min="1"
+                value={level.level}
+                onChange={e =>
+                  changeLevel(index, 'level', e.target.value)
+                }
+                required
+              />
+            </div>
+
+            <div>
+              <label>Damage</label>
+              <input
+                type="number"
+                min="0"
+                step="any"
+                value={level.damage}
+                onChange={e =>
+                  changeLevel(index, 'damage', e.target.value)
+                }
+                required
+              />
+            </div>
+
+            <div>
+              <label>Cooldown</label>
+              <input
+                type="number"
+                min="0.001"
+                step="any"
+                value={level.cooldown}
+                onChange={e =>
+                  changeLevel(index, 'cooldown', e.target.value)
+                }
+                required
+              />
+            </div>
+
+            <div>
+              <label>Range</label>
+              <input
+                type="number"
+                min="0"
+                step="any"
+                value={level.range}
+                onChange={e =>
+                  changeLevel(index, 'range', e.target.value)
+                }
+                required
+              />
+            </div>
+
+            <div>
+              <label>Upgrade cost</label>
+              <input
+                type="number"
+                min="0"
+                step="any"
+                value={level.upgradeCost}
+                onChange={e =>
+                  changeLevel(index, 'upgradeCost', e.target.value)
+                }
+              />
+            </div>
+          </div>
+        </div>
+      ))}
+
+      <button
+        type="button"
+        className="admin-add-level"
+        onClick={addLevel}
+      >
+        + ADD LEVEL
+      </button>
+    </div>
+  );
+}
 
 function AdminPage({ units = [], onBack, onReload }) {
   const [session, setSession] = useState(null);
@@ -34,6 +174,12 @@ function AdminPage({ units = [], onBack, onReload }) {
 
   const [form, setForm] = useState(emptyUnit);
   const [levels, setLevels] = useState([]);
+
+  const [shinyEnabled, setShinyEnabled] = useState(false);
+  const [shinyForm, setShinyForm] = useState(emptyShiny);
+  const [shinyLevels, setShinyLevels] = useState([]);
+
+  const [activeVersion, setActiveVersion] = useState('normal');
   const [editingId, setEditingId] = useState(null);
 
   useEffect(() => {
@@ -74,9 +220,14 @@ function AdminPage({ units = [], onBack, onReload }) {
   };
 
   const resetForm = () => {
-    setForm(emptyUnit);
+    setForm({ ...emptyUnit });
     setLevels([]);
+    setShinyForm({ ...emptyShiny });
+    setShinyLevels([]);
+    setShinyEnabled(false);
+    setActiveVersion('normal');
     setEditingId(null);
+    setError('');
   };
 
   const logout = async () => {
@@ -91,30 +242,11 @@ function AdminPage({ units = [], onBack, onReload }) {
     }));
   };
 
-  const changeLevel = (index, field, value) => {
-    setLevels(previous =>
-      previous.map((level, i) =>
-        i === index ? { ...level, [field]: value } : level
-      )
-    );
-  };
-
-  const addLevel = () => {
-    setLevels(previous => [
+  const changeShiny = (field, value) => {
+    setShinyForm(previous => ({
       ...previous,
-      createEmptyLevel(previous.length + 1)
-    ]);
-  };
-
-  const removeLevel = (index) => {
-    setLevels(previous =>
-      previous
-        .filter((_, i) => i !== index)
-        .map((level, i) => ({
-          ...level,
-          level: i + 1
-        }))
-    );
+      [field]: value
+    }));
   };
 
   const editUnit = (unit) => {
@@ -143,40 +275,56 @@ function AdminPage({ units = [], onBack, onReload }) {
       }))
     );
 
+    const shiny = unit.shiny;
+
+    if (shiny && typeof shiny === 'object') {
+      setShinyEnabled(true);
+
+      setShinyForm({
+        value: shiny.value ?? '',
+        demand: Number(shiny.demand) || 5,
+        max_level: shiny.max_level ?? '',
+        attack_type: shiny.attack_type || '',
+        damage_type: shiny.damage_type || '',
+        abilities: JSON.stringify(shiny.abilities || [], null, 2)
+      });
+
+      setShinyLevels(
+        (shiny.levels || []).map((level, index) => ({
+          level: level.level ?? index + 1,
+          damage: level.damage ?? '',
+          cooldown: level.cooldown ?? '',
+          range: level.range ?? '',
+          upgradeCost: level.upgradeCost ?? ''
+        }))
+      );
+    } else {
+      setShinyEnabled(false);
+      setShinyForm({ ...emptyShiny });
+      setShinyLevels([]);
+    }
+
+    setActiveVersion('normal');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const saveUnit = async (e) => {
-    e.preventDefault();
-    setError('');
-
-    let abilities;
-
+  const prepareAbilities = (json, label) => {
     try {
-      abilities = JSON.parse(form.abilities);
+      const abilities = JSON.parse(json);
 
       if (!Array.isArray(abilities)) {
-        throw new Error('Abilities must be a JSON array.');
+        throw new Error('Must be a JSON array.');
       }
+
+      return abilities;
     } catch (err) {
-      setError('Invalid abilities JSON: ' + err.message);
-      return;
+      throw new Error(`${label}: ${err.message}`);
     }
+  };
 
-    if (!form.name.trim()) {
-      setError('Unit name is required.');
-      return;
-    }
-
-    const demand = Number(form.demand);
-
-    if (!Number.isInteger(demand) || demand < 1 || demand > 10) {
-      setError('Demand must be a number between 1 and 10.');
-      return;
-    }
-
-    for (let i = 0; i < levels.length; i++) {
-      const level = levels[i];
+  const prepareLevels = (items, label) => {
+    for (let i = 0; i < items.length; i++) {
+      const level = items[i];
 
       if (
         level.level === '' ||
@@ -184,8 +332,9 @@ function AdminPage({ units = [], onBack, onReload }) {
         level.cooldown === '' ||
         level.range === ''
       ) {
-        setError(`Fill in Level, Damage, Cooldown and Range for level ${i + 1}.`);
-        return;
+        throw new Error(
+          `${label}: Fill in Level, Damage, Cooldown and Range for level ${i + 1}.`
+        );
       }
 
       if (
@@ -198,8 +347,9 @@ function AdminPage({ units = [], onBack, onReload }) {
         Number(level.cooldown) <= 0 ||
         Number(level.range) < 0
       ) {
-        setError(`Invalid statistics in level ${i + 1}. Cooldown must be greater than zero.`);
-        return;
+        throw new Error(
+          `${label}: Invalid statistics in level ${i + 1}. Cooldown must be greater than zero.`
+        );
       }
 
       if (
@@ -207,12 +357,13 @@ function AdminPage({ units = [], onBack, onReload }) {
         (!Number.isFinite(Number(level.upgradeCost)) ||
           Number(level.upgradeCost) < 0)
       ) {
-        setError(`Invalid upgrade cost in level ${i + 1}.`);
-        return;
+        throw new Error(
+          `${label}: Invalid upgrade cost in level ${i + 1}.`
+        );
       }
     }
 
-    const formattedLevels = levels.map(level => ({
+    return items.map(level => ({
       level: Number(level.level),
       damage: Number(level.damage),
       cooldown: Number(level.cooldown),
@@ -221,20 +372,94 @@ function AdminPage({ units = [], onBack, onReload }) {
         ? { upgradeCost: Number(level.upgradeCost) }
         : {})
     }));
+  };
 
-    const unitData = {
-      name: form.name.trim(),
-      rarity: form.rarity,
-      value: form.value === '' ? null : Number(form.value),
-      demand,
-      image: form.image.trim(),
-      description: form.description,
-      max_level: form.max_level === '' ? null : Number(form.max_level),
-      attack_type: form.attack_type,
-      damage_type: form.damage_type,
-      abilities,
-      levels: formattedLevels
-    };
+  const validateDemand = (value, label) => {
+    const demand = Number(value);
+
+    if (!Number.isInteger(demand) || demand < 1 || demand > 10) {
+      throw new Error(`${label} Demand must be between 1 and 10.`);
+    }
+
+    return demand;
+  };
+
+  const saveUnit = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    if (!form.name.trim()) {
+      setError('Unit name is required.');
+      return;
+    }
+
+    let unitData;
+
+    try {
+      const abilities = prepareAbilities(
+        form.abilities,
+        'NORMAL Abilities'
+      );
+
+      const normalDemand = validateDemand(
+        form.demand,
+        'NORMAL'
+      );
+
+      const normalLevels = prepareLevels(
+        levels,
+        'NORMAL'
+      );
+
+      unitData = {
+        name: form.name.trim(),
+        rarity: form.rarity,
+        value: form.value === '' ? null : Number(form.value),
+        demand: normalDemand,
+        image: form.image.trim(),
+        description: form.description,
+        max_level: form.max_level === '' ? null : Number(form.max_level),
+        attack_type: form.attack_type,
+        damage_type: form.damage_type,
+        abilities,
+        levels: normalLevels,
+        shiny: null
+      };
+
+      if (shinyEnabled) {
+        const shinyAbilities = prepareAbilities(
+          shinyForm.abilities,
+          'SHINY Abilities'
+        );
+
+        const shinyDemand = validateDemand(
+          shinyForm.demand,
+          'SHINY'
+        );
+
+        const formattedShinyLevels = prepareLevels(
+          shinyLevels,
+          'SHINY'
+        );
+
+        unitData.shiny = {
+          value: shinyForm.value === ''
+            ? null
+            : Number(shinyForm.value),
+          demand: shinyDemand,
+          max_level: shinyForm.max_level === ''
+            ? null
+            : Number(shinyForm.max_level),
+          attack_type: shinyForm.attack_type,
+          damage_type: shinyForm.damage_type,
+          abilities: shinyAbilities,
+          levels: formattedShinyLevels
+        };
+      }
+    } catch (err) {
+      setError(err.message);
+      return;
+    }
 
     setSaving(true);
 
@@ -331,6 +556,22 @@ function AdminPage({ units = [], onBack, onReload }) {
     );
   }
 
+  const currentForm = activeVersion === 'normal'
+    ? form
+    : shinyForm;
+
+  const currentChange = activeVersion === 'normal'
+    ? change
+    : changeShiny;
+
+  const currentLevels = activeVersion === 'normal'
+    ? levels
+    : shinyLevels;
+
+  const currentSetLevels = activeVersion === 'normal'
+    ? setLevels
+    : setShinyLevels;
+
   return (
     <div className="admin-page">
       <div className="admin-top">
@@ -370,23 +611,92 @@ function AdminPage({ units = [], onBack, onReload }) {
           </div>
 
           <div>
-            <label>Value</label>
+            <label>Image URL</label>
+            <input
+              value={form.image}
+              onChange={e => change('image', e.target.value)}
+              placeholder="https://..."
+            />
+          </div>
+        </div>
+
+        <label>Description</label>
+        <textarea
+          value={form.description}
+          onChange={e => change('description', e.target.value)}
+          rows={3}
+        />
+
+        <div className="admin-level-section">
+          <div className="admin-level-heading">
+            <h2>UNIT VERSIONS</h2>
+          </div>
+
+          <div className="admin-actions">
+            <button
+              type="button"
+              className={shinyEnabled ? 'admin-secondary' : 'admin-primary'}
+              onClick={() => setActiveVersion('normal')}
+            >
+              NORMAL
+            </button>
+
+            <button
+              type="button"
+              className="admin-secondary"
+              onClick={() => {
+                setShinyEnabled(true);
+                setActiveVersion('shiny');
+              }}
+            >
+              SHINY
+            </button>
+          </div>
+
+          <label>
+            <input
+              type="checkbox"
+              checked={shinyEnabled}
+              onChange={e => {
+                setShinyEnabled(e.target.checked);
+
+                if (!e.target.checked) {
+                  setActiveVersion('normal');
+                }
+              }}
+              style={{
+                width: 'auto',
+                marginRight: '9px',
+                accentColor: '#e8bd65'
+              }}
+            />
+            This unit has a Shiny version
+          </label>
+        </div>
+
+        <div className="admin-form-grid">
+          <div>
+            <label>
+              {activeVersion === 'normal' ? 'NORMAL VALUE' : 'SHINY VALUE'}
+            </label>
             <input
               type="number"
-              value={form.value}
-              onChange={e => change('value', e.target.value)}
+              value={currentForm.value}
+              onChange={e => currentChange('value', e.target.value)}
             />
           </div>
 
           <div>
-            <label>Demand: {form.demand}/10</label>
+            <label>Demand: {currentForm.demand}/10</label>
             <input
               type="range"
               min="1"
               max="10"
               step="1"
-              value={form.demand}
-              onChange={e => change('demand', Number(e.target.value))}
+              value={currentForm.demand}
+              onChange={e =>
+                currentChange('demand', Number(e.target.value))
+              }
               style={{
                 width: '100%',
                 accentColor: '#e8bd65',
@@ -408,148 +718,69 @@ function AdminPage({ units = [], onBack, onReload }) {
             <label>Max level</label>
             <input
               type="number"
-              value={form.max_level}
-              onChange={e => change('max_level', e.target.value)}
+              value={currentForm.max_level}
+              onChange={e =>
+                currentChange('max_level', e.target.value)
+              }
             />
           </div>
-        </div>
 
-        <label>Image URL</label>
-        <input
-          value={form.image}
-          onChange={e => change('image', e.target.value)}
-          placeholder="https://..."
-        />
-
-        <label>Description</label>
-        <textarea
-          value={form.description}
-          onChange={e => change('description', e.target.value)}
-          rows={3}
-        />
-
-        <div className="admin-form-grid">
           <div>
             <label>Attack type</label>
             <input
-              value={form.attack_type}
-              onChange={e => change('attack_type', e.target.value)}
+              value={currentForm.attack_type}
+              onChange={e =>
+                currentChange('attack_type', e.target.value)
+              }
             />
           </div>
 
           <div>
             <label>Damage type</label>
             <input
-              value={form.damage_type}
-              onChange={e => change('damage_type', e.target.value)}
+              value={currentForm.damage_type}
+              onChange={e =>
+                currentChange('damage_type', e.target.value)
+              }
             />
           </div>
         </div>
 
         <label>Abilities (JSON array)</label>
         <textarea
-          value={form.abilities}
-          onChange={e => change('abilities', e.target.value)}
+          value={currentForm.abilities}
+          onChange={e =>
+            currentChange('abilities', e.target.value)
+          }
           rows={7}
           spellCheck={false}
         />
 
-        <div className="admin-level-section">
-          <div className="admin-level-heading">
-            <h2>LEVEL STATISTICS</h2>
-            <span>{levels.length} levels</span>
-          </div>
+        <LevelEditor
+          title={`${activeVersion.toUpperCase()} LEVEL STATISTICS`}
+          levels={currentLevels}
+          setLevels={currentSetLevels}
+        />
 
-          {levels.map((level, index) => (
-            <div className="admin-level-card" key={index}>
-              <div className="admin-level-card-heading">
-                <h3>LEVEL {index + 1}</h3>
-
-                <button
-                  type="button"
-                  className="admin-danger"
-                  onClick={() => removeLevel(index)}
-                >
-                  REMOVE
-                </button>
-              </div>
-
-              <div className="admin-form-grid">
-                <div>
-                  <label>Level number</label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={level.level}
-                    onChange={e => changeLevel(index, 'level', e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label>Damage</label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="any"
-                    value={level.damage}
-                    onChange={e => changeLevel(index, 'damage', e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label>Cooldown</label>
-                  <input
-                    type="number"
-                    min="0.001"
-                    step="any"
-                    value={level.cooldown}
-                    onChange={e => changeLevel(index, 'cooldown', e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label>Range</label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="any"
-                    value={level.range}
-                    onChange={e => changeLevel(index, 'range', e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label>Upgrade cost</label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="any"
-                    value={level.upgradeCost}
-                    onChange={e => changeLevel(index, 'upgradeCost', e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
-
-          <button
-            type="button"
-            className="admin-add-level"
-            onClick={addLevel}
-          >
-            + ADD LEVEL
-          </button>
-        </div>
+        {activeVersion === 'shiny' && !shinyEnabled && (
+          <p className="admin-error">
+            Enable the Shiny version checkbox to save Shiny data.
+          </p>
+        )}
 
         {error && <p className="admin-error">{error}</p>}
 
         <div className="admin-actions">
-          <button type="submit" className="admin-primary" disabled={saving}>
-            {saving ? 'SAVING...' : editingId !== null ? 'SAVE CHANGES' : 'ADD UNIT'}
+          <button
+            type="submit"
+            className="admin-primary"
+            disabled={saving}
+          >
+            {saving
+              ? 'SAVING...'
+              : editingId !== null
+                ? 'SAVE CHANGES'
+                : 'ADD UNIT'}
           </button>
 
           {editingId !== null && (
@@ -571,7 +802,10 @@ function AdminPage({ units = [], onBack, onReload }) {
           <div className="admin-unit-row" key={unit.id}>
             <div>
               <strong>{unit.name}</strong>
-              <small>{unit.rarity || 'No rarity'}</small>
+              <small>
+                {unit.rarity || 'No rarity'}
+                {unit.shiny ? ' • SHINY AVAILABLE' : ''}
+              </small>
             </div>
 
             <div className="admin-unit-actions">
